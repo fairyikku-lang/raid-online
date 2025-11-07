@@ -1,0 +1,15 @@
+
+:root{--bg:#0b1622;--panel:#101b29;--border:#1f334a;--blue:#274e75;--text:#e6edf3}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
+a{color:#9cc9ff;text-decoration:none}
+.container{max-width:1080px;margin:0 auto;padding:16px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:12px}
+input,select,textarea{width:100%;background:#0e1a28;border:1px solid var(--blue);color:var(--text);border-radius:8px;padding:8px}
+button{background:#274e75;border:1px solid #3d6a97;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.grid{display:grid;gap:8px}
+.grid-2{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.flex{display:flex;gap:8px;align-items:center}
+.table{width:100%;border-collapse:separate;border-spacing:0}
+.table th,.table td{padding:8px;border-bottom:1px solid var(--border);text-align:left}
