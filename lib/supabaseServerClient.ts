@@ -1,6 +1,6 @@
 // lib/supabaseServerClient.ts
 import { cookies } from 'next/headers'
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient } from '@/lib/supabaseServerClient'
 
 /**
  * Use this in server components (default in App Router), server actions,
