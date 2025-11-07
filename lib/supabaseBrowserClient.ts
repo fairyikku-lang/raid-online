@@ -1,5 +1,5 @@
 // lib/supabaseBrowserClient.ts
-import { createBrowserClient } from '@supabase/ssr'
+import { createBrowserClient } from '@/lib/supabaseBrowserClient'
 
 /**
  * Use this ONLY in client components (files that start with 'use client'),
