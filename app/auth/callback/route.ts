@@ -22,5 +22,5 @@ export async function GET(request: Request) {
     )
   }
 
-  return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/heroes`)
+  return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/`)
 }
