@@ -1,5 +1,7 @@
+'use client'                           // ← TO MUSI BYĆ NA SAMEJ GÓRZE!
+
+import { useState } from 'react'
 import { createBrowserSupabaseClient } from '@/lib/supabaseBrowserClient'
-'use client'
 
 export default function SignInPage() {
   const [email, setEmail] = useState('')
@@ -13,7 +15,7 @@ export default function SignInPage() {
       options: {
         emailRedirectTo:
           'https://raid-online-cat1.vercel.app/auth/callback',
-        shouldCreateUser: false, // ✅ tylko zaproszeni użytkownicy
+        shouldCreateUser: false,
       },
     })
 
@@ -23,8 +25,21 @@ export default function SignInPage() {
       return
     }
 
-    alert('Wysłałem link logowania na maila 🙂')
+    alert('Wysłano link logowania na maila ✅')
   }
 
-  // ...reszta JSX (formularz)
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+      <h2>Logowanie bez hasła</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="email"
+          placeholder="twoj@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <button type="submit">Wyślij link</button>
+      </form>
+    </div>
+  )
 }
