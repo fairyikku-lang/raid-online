@@ -184,6 +184,6 @@ function Substats({gearId, items, onChange}:{gearId:string, items:any[], onChang
 }
 
 async function supabaseUpdate(table:string, id:string, patch:any){
-  const supa = createClient();
+  const supa = createBrowserSupabaseClient()
   await supa.from(table).update(patch).eq('id', id);
 }
