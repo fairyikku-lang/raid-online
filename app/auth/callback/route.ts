@@ -22,6 +22,5 @@ export async function GET(request: Request) {
     )
   }
 
-  // ✅ sesja powinna się zapisać i przekierować użytkownika dalej
   return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/heroes`)
 }
