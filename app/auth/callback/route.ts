@@ -1,15 +1,14 @@
 import { NextResponse } from 'next/server'
-import { createClientServer } from '@/lib/supabaseClient'
+import { createServerSupabaseClient } from '@/lib/supabaseServerClient'
 
 export async function GET(req: Request) {
   const url = new URL(req.url)
   const code = url.searchParams.get('code')
 
   if (code) {
-    const supabase = createClientServer()
+    const supabase = createServerSupabaseClient()
     await supabase.auth.exchangeCodeForSession(code)
   }
 
-  // po zalogowaniu wracamy na stronę główną
   return NextResponse.redirect(new URL('/', process.env.NEXT_PUBLIC_SITE_URL))
 }
