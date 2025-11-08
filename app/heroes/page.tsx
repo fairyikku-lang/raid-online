@@ -1,10 +1,10 @@
 'use client';
-import { createClient } from '@/lib/supabaseClient';
+import { createBrowserSupabaseClient } from '@/lib/supabaseBrowserClient'
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function Heroes(){
-  const supa = createClient();
+  const supa = createBrowserSupabaseClient();
   const [rows,setRows] = useState<any[]>([]);
   const [name,setName] = useState('');
   const fetchAll = async ()=>{
