@@ -154,7 +154,7 @@ export default function HeroCard(){
 }
 
 function Substats({gearId, items, onChange}:{gearId:string, items:any[], onChange:()=>void}){
-  const supa = createClient();
+  const supa = createBrowserSupabaseClient()
   const [rows,setRows] = useState<any[]>(items);
   useEffect(()=>setRows(items),[items]);
   const add = async ()=>{
