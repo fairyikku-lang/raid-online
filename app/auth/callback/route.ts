@@ -1,32 +1,15 @@
 import { NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import { createServerClient } from '@supabase/ssr'
+import { createClientServer } from '@/lib/supabaseClient'
 
-export async function GET(request: Request) {
-  const url = new URL(request.url)
+export async function GET(req: Request) {
+  const url = new URL(req.url)
   const code = url.searchParams.get('code')
-  const cookieStore = cookies()
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
-        },
-        set(name: string, value: string, options: any) {
-          cookieStore.set({ name, value, ...options })
-        },
-        remove(name: string, options: any) {
-          cookieStore.set({ name, value: '', ...options })
-        },
-      },
-    }
-  )
 
   if (code) {
+    const supabase = createClientServer()
     await supabase.auth.exchangeCodeForSession(code)
   }
-  // po zalogowaniu wracamy na dashboard/stronę główną
+
+  // po zalogowaniu wracamy na stronę główną
   return NextResponse.redirect(new URL('/', process.env.NEXT_PUBLIC_SITE_URL))
 }
