@@ -1,40 +1,82 @@
+// app/signin/page.tsx
 'use client';
-import { createClient } from '@/lib/supabaseClient';
+
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { createClient } from '@supabase/supabase-js';
 
-export default function SignIn(){
-  const supa = createClient();
-  const [email,setEmail] = useState('');
-  const [pass,setPass] = useState('');
-  const [status,setStatus] = useState('');
-  const router = useRouter();
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
-  const signIn = async ()=>{
-    setStatus('...');
-    const { data, error } = await supa.auth.signInWithPassword({ email, password: pass });
-    if (error){ setStatus(error.message); } else { router.push('/heroes'); }
-  };
-  const signUp = async ()=>{
-    setStatus('...');
-    const { data, error } = await supa.auth.signUp({ email, password: pass });
-    if (error){ setStatus(error.message); } else { setStatus('Sprawdź e-mail (link aktywacyjny)'); }
+export default function SignInPage() {
+  const [email, setEmail] = useState('');
+  const [msg, setMsg] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSending(true);
+    setMsg(null);
+    setErr(null);
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+        shouldCreateUser: false, // tylko istniejący użytkownicy
+      },
+    });
+
+    setSending(false);
+
+    if (error) setErr(error.message);
+    else {
+      setMsg(`Wysłaliśmy link logowania na: ${email}`);
+      setEmail('');
+    }
   };
 
   return (
-    <div className="container">
-      <div className="card">
-        <h2>Logowanie</h2>
-        <div className="grid grid-2">
-          <div><label>Email</label><input value={email} onChange={e=>setEmail(e.target.value)} /></div>
-          <div><label>Hasło</label><input type="password" value={pass} onChange={e=>setPass(e.target.value)} /></div>
-        </div>
-        <div className="flex" style={{marginTop:8}}>
-          <button onClick={signIn}>Wejście</button>
-          <button onClick={signUp}>Rejestracja</button>
-          <span>{status}</span>
-        </div>
-      </div>
+    <div style={{ maxWidth: 600, margin: '80px auto', textAlign: 'center' }}>
+      <h1>Logowanie bez hasła</h1>
+      <p>Podaj e-mail — wyślemy link logowania.</p>
+
+      <form onSubmit={handleLogin} style={{ marginTop: 20 }}>
+        <input
+          type="email"
+          value={email}
+          required
+          placeholder="twoj@email.com"
+          onChange={(e) => setEmail(e.target.value)}
+          style={{
+            padding: '10px',
+            width: '80%',
+            borderRadius: 8,
+            border: '1px solid #333',
+          }}
+        />
+        <br />
+        <button
+          type="submit"
+          disabled={sending}
+          style={{
+            marginTop: 15,
+            padding: '10px 20px',
+            borderRadius: 8,
+            border: 'none',
+            background: '#0070f3',
+            color: 'white',
+            cursor: 'pointer',
+          }}
+        >
+          {sending ? 'Wysyłanie...' : 'Wyślij link'}
+        </button>
+      </form>
+
+      {msg && <p style={{ color: '#22c55e', marginTop: 15 }}>{msg}</p>}
+      {err && <p style={{ color: '#ef4444', marginTop: 15 }}>{err}</p>}
     </div>
   );
 }

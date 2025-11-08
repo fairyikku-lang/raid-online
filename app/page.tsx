@@ -1,28 +1,44 @@
+// app/page.tsx
 'use client';
-import { createClient } from '@/lib/supabaseClient';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
 
-export default function Home(){
-  const supa = createClient();
-  const [user,setUser] = useState<any>(null);
-  useEffect(()=>{supa.auth.getUser().then(r=>setUser(r.data.user));},[]);
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+export default function Home() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [email, setEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.replace('/signin');
+        return;
+      }
+      setEmail(user.email ?? null);
+      setLoading(false);
+    })();
+  }, [router]);
+
+  if (loading) return <div style={{ padding: 24 }}>Ładowanie…</div>;
+
   return (
-    <div className="container">
-      <div className="card">
-        <h1>RAID Online v1</h1>
-        <p>Wspólna baza Raid: logowanie, bohaterowie, gear.</p>
-        {!user ? (
-          <div className="flex">
-            <Link href="/signin"><button>Zaloguj</button></Link>
-          </div>
-        ) : (
-          <div className="flex">
-            <Link href="/heroes"><button>Przejdź do bohaterów</button></Link>
-            <button onClick={()=>supa.auth.signOut().then(()=>location.reload())}>Wyloguj</button>
-          </div>
-        )}
-      </div>
+    <div style={{ padding: 24 }}>
+      <h1>Witaj {email ?? ''} 👋</h1>
+      <p>Jesteś zalogowany. To jest bezpieczny widok po stronie klienta.</p>
+      <button
+        onClick={async () => { await supabase.auth.signOut(); router.replace('/signin'); }}
+        style={{ marginTop: 12 }}
+      >
+        Wyloguj
+      </button>
     </div>
   );
 }
