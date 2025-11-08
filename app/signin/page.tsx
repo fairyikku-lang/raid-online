@@ -1,36 +1,30 @@
-'use client'
-
-import { useState } from 'react'
 import { createBrowserSupabaseClient } from '@/lib/supabaseBrowserClient'
+'use client'
 
 export default function SignInPage() {
   const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<'idle'|'ok'|'err'>('idle')
+  const supabase = createBrowserSupabaseClient()
 
-  const sendLink = async () => {
-    setStatus('idle')
-    const supabase = createBrowserSupabaseClient()
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+        emailRedirectTo:
+          'https://raid-online-cat1.vercel.app/auth/callback',
+        shouldCreateUser: false, // ✅ tylko zaproszeni użytkownicy
       },
     })
-    setStatus(error ? 'err' : 'ok')
+
+    if (error) {
+      console.error(error.message)
+      alert('Błąd logowania: ' + error.message)
+      return
+    }
+
+    alert('Wysłałem link logowania na maila 🙂')
   }
 
-  return (
-    <div style={{maxWidth:560,margin:'80px auto',textAlign:'center'}}>
-      <h1>Logowanie bez hasła</h1>
-      <input
-        value={email}
-        onChange={e=>setEmail(e.target.value)}
-        placeholder="twoj@email.com"
-        style={{width:'100%',padding:12,margin:'12px 0'}}
-      />
-      <button onClick={sendLink}>Wyślij link</button>
-      {status==='ok' && <p>Sprawdź e-maila – wysłaliśmy link ✉️</p>}
-      {status==='err' && <p>Nie udało się wysłać linku.</p>}
-    </div>
-  )
+  // ...reszta JSX (formularz)
 }
