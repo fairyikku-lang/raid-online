@@ -1,12 +1,12 @@
 'use client';
-import { createClient } from '@/lib/supabaseClient';
+import { createBrowserSupabaseClient } from '@/lib/supabaseBrowserClient'
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 
 const KEYS = ['HP','ATK','DEF','SPD','CRATE','CDMG','RES','ACC'] as const;
 
 export default function HeroCard(){
-  const supa = createClient();
+  const supa = createBrowserSupabaseClient()
   const { id } = useParams();
   const [h,setH] = useState<any>(null);
   const [gear,setGear] = useState<any[]>([]);
