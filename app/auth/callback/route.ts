@@ -6,14 +6,13 @@ export async function GET(req: NextRequest) {
   const url = new URL(req.url)
   const code = url.searchParams.get('code')
 
-  // jeśli nie ma code – wracamy do logowania
+  // Brak code → wróć do logowania
   if (!code) {
     return NextResponse.redirect(new URL('/signin', url.origin))
   }
 
   const supabase = createServerSupabaseClient()
 
-  // wymiana "code" z linka na sesję + cookie
   const { error } = await supabase.auth.exchangeCodeForSession(code)
 
   if (error) {
@@ -21,8 +20,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL('/signin?error=auth', url.origin))
   }
 
-  // ✅ tutaj już POWINNA być założona sesja
-  // wybierz gdzie chcesz lądować po zalogowaniu:
-  return NextResponse.redirect(new URL('/heroes', url.origin))
-  // albo np.: new URL('/heroes', url.origin)
+  // ✅ Sesja ustawiona — przekierowujemy użytkownika np. na stronę główną
+  return NextResponse.redirect(new URL('/', url.origin))
 }
