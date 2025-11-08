@@ -1,25 +1,27 @@
 // app/auth/callback/route.ts
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabaseServerClient'
 
-export async function GET(req: NextRequest) {
-  const url = new URL(req.url)
+export async function GET(request: Request) {
+  const url = new URL(request.url)
   const code = url.searchParams.get('code')
 
-  // Brak code → wróć do logowania
   if (!code) {
-    return NextResponse.redirect(new URL('/signin', url.origin))
+    return NextResponse.redirect(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/signin?error=missing_code`
+    )
   }
 
   const supabase = createServerSupabaseClient()
-
   const { error } = await supabase.auth.exchangeCodeForSession(code)
 
   if (error) {
-    console.error('exchangeCodeForSession error:', error.message)
-    return NextResponse.redirect(new URL('/signin?error=auth', url.origin))
+    console.error('exchangeCodeForSession error:', error)
+    return NextResponse.redirect(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/signin?error=exchange_failed`
+    )
   }
 
-  // ✅ Sesja ustawiona — przekierowujemy użytkownika np. na stronę główną
-  return NextResponse.redirect(new URL('/', url.origin))
+  // ✅ sesja powinna się zapisać i przekierować użytkownika dalej
+  return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/heroes`)
 }
