@@ -9,7 +9,7 @@ export default function SignInPage() {
 
   const sendLink = async () => {
     setStatus('idle')
-    const supabase = createClientBrowser()
+    const supabase = createBrowserSupabaseClient()
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
