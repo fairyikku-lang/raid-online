@@ -244,38 +244,66 @@ export default function HeroViewPage() {
         </section>
       </div>
 
-      {/* Statystyki */}
+     {/* Statystyki */}
       <section className="hero-card space-y-3">
         <h2 className="section-title">Statystyki</h2>
-        <div className="grid md:grid-cols-2 gap-4 text-sm">
-          {KEYS.map((k) => {
-            const key = k.toLowerCase();
-            const baseKey = `base_${key}`;
-            const bonusKey = `bonus_${key}`;
-            const isPct = k === 'CRATE' || k === 'CDMG';
 
-            return (
-              <div key={k} className="flex justify-between gap-4">
-                <div className="flex-1">
-                  <div className="text-xs opacity-70">Bazowe {k}</div>
-                  <div className="font-semibold">
+        <div className="grid md:grid-cols-2 gap-10 mt-2 text-sm">
+          {/* Kolumna bazowa */}
+          <div>
+            <div className="text-xs opacity-70 tracking-[0.18em] uppercase mb-2">
+              Bazowe statystyki
+            </div>
+            {KEYS.map((k) => {
+              const key = k.toLowerCase();
+              const baseKey = `base_${key}`;
+              const isPct = k === 'CRATE' || k === 'CDMG';
+              const label = k === 'CRATE' ? 'CRATE' : k === 'CDMG' ? 'CDMG' : k;
+
+              return (
+                <div
+                  key={`base-${k}`}
+                  className="flex items-baseline justify-between py-0.5"
+                >
+                  <span className="text-[0.8rem]">
+                    Bazowe {label}
+                  </span>
+                  <span className="font-semibold">
                     {Number(hero[baseKey] ?? 0)}
                     {isPct ? ' %' : ''}
-                  </div>
+                  </span>
                 </div>
-                <div className="flex-1 text-right">
-                  <div className="text-xs opacity-70">
-                    Bonus {k}
-                    {isPct ? ' (%)' : ''}
-                  </div>
-                  <div className="font-semibold">
+              );
+            })}
+          </div>
+
+          {/* Kolumna bonusowa */}
+          <div>
+            <div className="text-xs opacity-70 tracking-[0.18em] uppercase mb-2">
+              Bonusowe statystyki
+            </div>
+            {KEYS.map((k) => {
+              const key = k.toLowerCase();
+              const bonusKey = `bonus_${key}`;
+              const isPct = k === 'CRATE' || k === 'CDMG';
+              const label = k === 'CRATE' ? 'CRATE' : k === 'CDMG' ? 'CDMG' : k;
+
+              return (
+                <div
+                  key={`bonus-${k}`}
+                  className="flex items-baseline justify-between py-0.5"
+                >
+                  <span className="text-[0.8rem]">
+                    Bonus {label}{isPct ? ' (%)' : ''}
+                  </span>
+                  <span className="font-semibold">
                     {Number(hero[bonusKey] ?? 0)}
                     {isPct ? ' %' : ''}
-                  </div>
+                  </span>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </section>
 
