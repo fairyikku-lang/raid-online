@@ -226,11 +226,11 @@ export default function HeroViewPage() {
           </div>
         </aside>
 
-        {/* Karta bohatera: lewa część dane, prawa umiejętności */}
+         {/* Karta bohatera: lewa część dane, prawa umiejętności */}
         <section className="hero-card">
-          <div className="grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-10 items-start">
-            {/* Dane bohatera */}
-            <div className="space-y-3">
+          <div className="flex gap-10 items-start">
+            {/* Dane bohatera – kolumna lewa */}
+            <div className="flex-1 min-w-[320px] space-y-3">
               <h1 className="hero-name">{hero.name}</h1>
               <p className="hero-subtitle">
                 {hero.faction || 'Brak frakcji'} • {hero.rarity || 'Brak rzadkości'}
@@ -266,8 +266,8 @@ export default function HeroViewPage() {
               </div>
             </div>
 
-            {/* Umiejętności – po prawej, w tym samym panelu */}
-            <div className="space-y-2">
+            {/* Umiejętności – kolumna prawa */}
+            <div className="w-[40%] min-w-[260px] space-y-2">
               <h2 className="section-title">Umiejętności</h2>
               {skillsEmpty ? (
                 <p className="text-xs text-slate-200/70 italic">
@@ -281,7 +281,6 @@ export default function HeroViewPage() {
             </div>
           </div>
         </section>
-      </div>
 
       {/* STATYSTYKI + KALKULATOR + EKWIPUNEK W JEDNYM BLOKU */}
       <section className="hero-card space-y-3 mt-2">
