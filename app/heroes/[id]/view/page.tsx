@@ -193,51 +193,42 @@ export default function HeroViewPage() {
           </div>
         </aside>
 
-        {/* DANE + UMIEJĘTNOŚCI */}
+        {/* DANE */}
         <section className="hero-card">
-          <div className="flex flex-row items-start gap-8 justify-between">
-            {/* LEWA KOLUMNA */}
-            <div className="flex flex-col flex-1 min-w-[380px] max-w-[55%] space-y-3">
-              <h1 className="hero-name">{hero.name}</h1>
-              <p className="hero-subtitle">
-                {hero.faction || 'Brak frakcji'} • {hero.rarity || 'Brak rzadkości'}
-              </p>
+          <h1 className="hero-name">{hero.name}</h1>
+          <p className="hero-subtitle">
+            {hero.faction || 'Brak frakcji'} • {hero.rarity || 'Brak rzadkości'}
+          </p>
 
-              <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm mt-2">
-                <div>Affinity: <span className="text-amber-200">{hero.affinity || '—'}</span></div>
-                <div>Typ: <span className="text-amber-200">{hero.type || '—'}</span></div>
-                <div>Poziom: <span className="text-amber-200">{hero.level ?? '—'}</span></div>
-                <div>Gwiazdki: <span className="text-amber-200">{hero.stars ?? '—'}</span></div>
-                <div>Asc: <span className="text-amber-200">{hero.asc ?? '—'}</span></div>
-                <div>Blessing: <span className="text-amber-200">
-                  {hero.blessing || '—'} {hero.blessing_level ? `(lvl ${hero.blessing_level})` : ''}
-                </span></div>
-              </div>
-            </div>
-
-            {/* GRADIENT + UMIEJĘTNOŚCI */}
-            <div className="relative flex flex-col w-[40%] min-w-[340px] pl-10">
-              <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-slate-700/70 to-transparent rounded-full"></div>
-
-              <h2 className="text-[0.9rem] font-semibold uppercase tracking-[0.15em] text-amber-300 border-b border-slate-700/60 pb-2 mb-3">
-                Umiejętności
-              </h2>
-
-              <div className="bg-slate-900/40 rounded-xl px-5 py-4 shadow-[0_0_12px_rgba(0,0,0,0.45)]">
-                {skillsEmpty ? (
-                  <p className="text-[0.9rem] text-slate-200/80 italic leading-relaxed">
-                    Brak zdefiniowanych umiejętności dla tego bohatera.
-                  </p>
-                ) : (
-                  <pre className="font-mono text-[0.8rem] text-slate-100 leading-relaxed whitespace-pre-wrap max-h-56 overflow-y-auto">
-                    {JSON.stringify(hero.skills, null, 2)}
-                  </pre>
-                )}
-              </div>
-            </div>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm mt-3">
+            <div>Affinity: <span className="text-amber-200">{hero.affinity || '—'}</span></div>
+            <div>Typ: <span className="text-amber-200">{hero.type || '—'}</span></div>
+            <div>Poziom: <span className="text-amber-200">{hero.level ?? '—'}</span></div>
+            <div>Gwiazdki: <span className="text-amber-200">{hero.stars ?? '—'}</span></div>
+            <div>Asc: <span className="text-amber-200">{hero.asc ?? '—'}</span></div>
+            <div>Blessing: <span className="text-amber-200">
+              {hero.blessing || '—'} {hero.blessing_level ? `(lvl ${hero.blessing_level})` : ''}
+            </span></div>
           </div>
         </section>
       </div>
+
+      {/* UMIEJĘTNOŚCI */}
+      <section className="hero-card relative bg-gradient-to-r from-slate-950/80 via-slate-900/70 to-slate-950/80 rounded-xl border border-slate-700/40 p-6 mt-2">
+        <h2 className="text-[0.9rem] font-semibold uppercase tracking-[0.15em] text-amber-300 border-b border-slate-700/60 pb-2 mb-3">
+          Umiejętności
+        </h2>
+
+        {skillsEmpty ? (
+          <p className="text-[0.9rem] text-slate-200/80 italic leading-relaxed">
+            Brak zdefiniowanych umiejętności dla tego bohatera.
+          </p>
+        ) : (
+          <pre className="font-mono text-[0.8rem] text-slate-100 leading-relaxed whitespace-pre-wrap max-h-56 overflow-y-auto">
+            {JSON.stringify(hero.skills, null, 2)}
+          </pre>
+        )}
+      </section>
 
       {/* STATYSTYKI */}
       <section className="hero-card space-y-3 mt-2">
@@ -336,3 +327,4 @@ export default function HeroViewPage() {
     </main>
   );
 }
+
