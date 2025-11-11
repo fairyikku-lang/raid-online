@@ -270,19 +270,22 @@
 .hero-table tbody tr:hover {
   background: rgba(30, 64, 175, 0.2);
 }
-/* Dwie kolumny statystyk obok siebie:
-   bazowe | bonusowe */
+/* Dwie kolumny statystyk, wycentrowane pod panelem z danymi bohatera */
 .hero-stats-columns {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  column-gap: 1.75rem;       /* było 4rem – zmniejszamy o połowę */
+  grid-auto-flow: column;        /* kolumny obok siebie */
+  grid-auto-columns: auto;       /* szerokość wg zawartości */
+  column-gap: 2.5rem;            /* odstęp między Bazowe / Bonusowe */
+  justify-content: center;       /* całość wycentrowana w karcie */
   align-items: flex-start;
 }
 
-/* Na wąskich ekranach statystyki mogą się zwinąć jedna pod drugą */
+/* Na bardzo wąskich ekranach pozwól spaść jedną pod drugą */
 @media (max-width: 900px) {
   .hero-stats-columns {
-    grid-template-columns: minmax(0, 1fr);
+    grid-auto-flow: row;
+    grid-auto-columns: unset;
     row-gap: 2.5rem;
+    justify-content: flex-start;
   }
 }
