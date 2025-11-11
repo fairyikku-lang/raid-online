@@ -195,15 +195,15 @@ export default function HeroViewPage() {
 
         {/* DANE + UMIEJĘTNOŚCI */}
         <section className="hero-card">
-          <div className="flex flex-row justify-between items-start gap-8">
-            {/* LEWA: dane */}
-            <div className="flex flex-col flex-1 min-w-[320px] space-y-3">
+          <div className="flex flex-row justify-between items-start gap-10">
+            {/* LEWA KOLUMNA – dane bohatera */}
+            <div className="flex-1 min-w-[360px]">
               <h1 className="hero-name">{hero.name}</h1>
               <p className="hero-subtitle">
                 {hero.faction || 'Brak frakcji'} • {hero.rarity || 'Brak rzadkości'}
               </p>
 
-              <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm mt-2">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm mt-3">
                 <div>Affinity: <span className="text-amber-200">{hero.affinity || '—'}</span></div>
                 <div>Typ: <span className="text-amber-200">{hero.type || '—'}</span></div>
                 <div>Poziom: <span className="text-amber-200">{hero.level ?? '—'}</span></div>
@@ -213,10 +213,10 @@ export default function HeroViewPage() {
               </div>
             </div>
 
-            {/* PRAWA: umiejętności */}
-            <div className="w-[40%] min-w-[300px]">
-              <div className="border border-slate-700/60 rounded-xl px-5 py-4 bg-slate-900/50 shadow-[0_0_16px_rgba(0,0,0,0.45)]">
-                <h2 className="text-[0.8rem] font-semibold tracking-[0.15em] uppercase text-amber-300 border-b border-slate-700/60 pb-2 mb-2">
+            {/* PRAWA KOLUMNA – umiejętności */}
+            <div className="w-[42%] min-w-[320px]">
+              <div className="border border-slate-700/60 rounded-xl px-5 py-4 bg-slate-900/40 shadow-[0_0_14px_rgba(0,0,0,0.45)]">
+                <h2 className="text-[0.9rem] font-semibold uppercase tracking-[0.15em] text-amber-300 border-b border-slate-700/60 pb-2 mb-3">
                   Umiejętności
                 </h2>
 
