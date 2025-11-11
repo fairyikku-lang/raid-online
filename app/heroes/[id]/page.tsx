@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useMemo, useState, type ChangeEvent } from 'react';
@@ -6,7 +7,6 @@ import { createBrowserSupabaseClient } from '@/lib/supabaseBrowserClient';
 
 const KEYS = ['HP', 'ATK', 'DEF', 'SPD', 'CRATE', 'CDMG', 'RES', 'ACC'] as const;
 
-// RAID – słowniki
 const FACTIONS = [
   'Banner Lords',
   'High Elves',
@@ -33,6 +33,32 @@ const AFFINITIES = ['Magic', 'Spirit', 'Force', 'Void'];
 
 const STARS = [1, 2, 3, 4, 5, 6];
 
+const BLESSINGS = [
+  'Brimstone',
+  'Cruelty',
+  'Crushing Rend',
+  'Faultless Defense',
+  'Heavenly Equal',
+  'Hero’s Soul',
+  'Intimidating Presence',
+  'Iron Will',
+  'Lightning Cage',
+  'Life Harvest',
+  'Miracle Heal',
+  'Phantom Touch',
+  'Polymorph',
+  'Smite',
+  'Soul Reap',
+  'Temporal Chains',
+  'Ward of the Fallen',
+  'Commanding Presence',
+  'Incinerate',
+  'Overwhelming Strength',
+  'Hero’s Heart',
+  'Carapace',
+  'Chainbreaker',
+];
+
 type Hero = {
   id: string;
   name: string;
@@ -42,10 +68,10 @@ type Hero = {
   affinity: string | null;
   level: number | null;
   stars: number | null;
-  asc: string | null;
+  asc: number | null;
   blessing: string | null;
+  blessing_level: number | null;
   skills: unknown;
-  // staty (mogą nie istnieć w tabeli – wtedy będą undefined)
   [key: string]: any;
 };
 
@@ -67,7 +93,7 @@ type Substat = {
   value: number | null;
 };
 
-export default function HeroPage() {
+export default function HeroEditPage() {
   const supa = createBrowserSupabaseClient();
   const params = useParams();
   const heroId = params?.id as string | undefined;
@@ -247,7 +273,7 @@ export default function HeroPage() {
 
   if (!heroId) {
     return (
-      <main className="max-w-5xl mx-auto p-4">
+      <main className="hero-page max-w-5xl mx-auto p-4">
         Brak ID bohatera w adresie.
       </main>
     );
@@ -255,168 +281,223 @@ export default function HeroPage() {
 
   if (loading || !hero) {
     return (
-      <main className="max-w-5xl mx-auto p-4">
-        <p className="text-sm text-gray-400">Ładowanie…</p>
+      <main className="hero-page max-w-5xl mx-auto p-4">
+        <p className="text-sm text-slate-200/70">Ładowanie…</p>
       </main>
     );
   }
 
   return (
-    <main className="max-w-5xl mx-auto p-4 space-y-6">
-      {/* Główna karta */}
-      <div className="border rounded-xl p-4 space-y-4">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-2xl font-bold">{hero.name}</h2>
-          <button
-            type="button"
-            onClick={saveAllNow}
-            disabled={savingAll}
-            className="border rounded-md px-3 py-1 text-sm font-medium disabled:opacity-60"
-          >
-            {savingAll ? 'Zapisywanie…' : 'Zapisz zmiany'}
-          </button>
-        </div>
+    <main className="hero-page max-w-6xl mx-auto p-6 space-y-6">
+      <div className="hero-grid">
+        {/* Portret */}
+        <aside className="hero-portrait">
+          <div className="hero-portrait-inner">
+            <div className="hero-portrait-frame">
+              <div className="hero-portrait-placeholder">
+                {hero.name?.slice(0, 2) || '?'}
+              </div>
+            </div>
+          </div>
+        </aside>
 
-        <p className="text-xs opacity-70">
-          Większość pól zapisuje się automatycznie przy zmianie. Przycisk
-          „Zapisz zmiany” wysyła całą kartę jeszcze raz do bazy.
-        </p>
+        {/* Dane główne */}
+        <section className="hero-card space-y-4">
+          <div className="flex items-center justify-between gap-4">
+            <h1 className="hero-name">{hero.name}</h1>
+            <button
+              type="button"
+              onClick={saveAllNow}
+              disabled={savingAll}
+              className="btn-forge"
+            >
+              {savingAll ? 'Zapisywanie…' : 'Zapisz zmiany'}
+            </button>
+          </div>
+          <p className="hero-subtitle">
+            {hero.faction || 'Brak frakcji'} • {hero.rarity || 'Brak rzadkości'}
+          </p>
 
-        <div className="grid md:grid-cols-3 gap-3">
-          {/* Frakcja */}
-          <div className="flex flex-col gap-1">
-            <label className="text-xs uppercase opacity-70">Frakcja</label>
+          <div className="grid md:grid-cols-3 gap-3">
+            {/* Frakcja */}
+            <div className="field-group">
+              <label className="field-label">Frakcja</label>
+              <select
+                className="field-input bg-transparent"
+                value={hero.faction || ''}
+                onChange={(e) =>
+                  saveHero({ faction: e.target.value || null } as Partial<Hero>)
+                }
+              >
+                <option value="">—</option>
+                {FACTIONS.map((f) => (
+                  <option key={f} value={f}>
+                    {f}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Rzadkość */}
+            <div className="field-group">
+              <label className="field-label">Rzadkość</label>
+              <select
+                className="field-input bg-transparent"
+                value={hero.rarity || ''}
+                onChange={(e) =>
+                  saveHero({ rarity: e.target.value || null } as Partial<Hero>)
+                }
+              >
+                <option value="">—</option>
+                {RARITIES.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Typ / rola */}
+            <div className="field-group">
+              <label className="field-label">Typ (Rola)</label>
+              <select
+                className="field-input bg-transparent"
+                value={hero.type || ''}
+                onChange={(e) =>
+                  saveHero({ type: e.target.value || null } as Partial<Hero>)
+                }
+              >
+                <option value="">—</option>
+                {ROLES.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Affinity */}
+            <div className="field-group">
+              <label className="field-label">Affinity</label>
+              <select
+                className="field-input bg-transparent"
+                value={hero.affinity || ''}
+                onChange={(e) =>
+                  saveHero({ affinity: e.target.value || null } as Partial<Hero>)
+                }
+              >
+                <option value="">—</option>
+                {AFFINITIES.map((a) => (
+                  <option key={a} value={a}>
+                    {a}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Poziom */}
+            <div className="field-group">
+              <label className="field-label">Poziom</label>
+              <input
+                type="number"
+                className="field-input"
+                value={hero.level ?? 0}
+                onChange={numInput('level')}
+              />
+            </div>
+
+            {/* Gwiazdki */}
+            <div className="field-group">
+              <label className="field-label">Gwiazdki</label>
+              <select
+                className="field-input bg-transparent"
+                value={hero.stars ?? ''}
+                onChange={(e) =>
+                  saveHero({
+                    stars: e.target.value ? Number(e.target.value) : null,
+                  } as Partial<Hero>)
+                }
+              >
+                <option value="">—</option>
+                {STARS.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Asc */}
+            <div className="field-group">
+              <label className="field-label">Asc (Awans)</label>
+              <select
+                className="field-input bg-transparent"
+                value={hero.asc ?? ''}
+                onChange={(e) =>
+                  saveHero({
+                    asc: e.target.value ? Number(e.target.value) : null,
+                  } as Partial<Hero>)
+                }
+              >
+                <option value="">—</option>
+                {STARS.map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* Blessing */}
+      <section className="hero-card space-y-3">
+        <h2 className="section-title">Blessing</h2>
+        <div className="grid md:grid-cols-2 gap-3">
+          <div className="field-group">
+            <label className="field-label">Rodzaj Blessingu</label>
             <select
-              className="border rounded-md px-2 py-1 text-sm bg-transparent"
-              value={hero.faction || ''}
+              className="field-input bg-transparent"
+              value={hero.blessing || ''}
               onChange={(e) =>
-                saveHero({ faction: e.target.value || null } as Partial<Hero>)
+                saveHero({ blessing: e.target.value || null } as Partial<Hero>)
               }
             >
               <option value="">—</option>
-              {FACTIONS.map((f) => (
-                <option key={f} value={f}>
-                  {f}
+              {BLESSINGS.map((b) => (
+                <option key={b} value={b}>
+                  {b}
                 </option>
               ))}
             </select>
           </div>
-
-          {/* Rzadkość */}
-          <div className="flex flex-col gap-1">
-            <label className="text-xs uppercase opacity-70">Rzadkość</label>
+          <div className="field-group">
+            <label className="field-label">Poziom Blessingu</label>
             <select
-              className="border rounded-md px-2 py-1 text-sm bg-transparent"
-              value={hero.rarity || ''}
-              onChange={(e) =>
-                saveHero({ rarity: e.target.value || null } as Partial<Hero>)
-              }
-            >
-              <option value="">—</option>
-              {RARITIES.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Typ / rola */}
-          <div className="flex flex-col gap-1">
-            <label className="text-xs uppercase opacity-70">Typ (Rola)</label>
-            <select
-              className="border rounded-md px-2 py-1 text-sm bg-transparent"
-              value={hero.type || ''}
-              onChange={(e) =>
-                saveHero({ type: e.target.value || null } as Partial<Hero>)
-              }
-            >
-              <option value="">—</option>
-              {ROLES.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Affinity */}
-          <div className="flex flex-col gap-1">
-            <label className="text-xs uppercase opacity-70">Affinity</label>
-            <select
-              className="border rounded-md px-2 py-1 text-sm bg-transparent"
-              value={hero.affinity || ''}
-              onChange={(e) =>
-                saveHero({ affinity: e.target.value || null } as Partial<Hero>)
-              }
-            >
-              <option value="">—</option>
-              {AFFINITIES.map((a) => (
-                <option key={a} value={a}>
-                  {a}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Poziom */}
-          <div className="flex flex-col gap-1">
-            <label className="text-xs uppercase opacity-70">Poziom</label>
-            <input
-              type="number"
-              className="border rounded-md px-2 py-1 text-sm"
-              value={hero.level ?? 0}
-              onChange={numInput('level')}
-            />
-          </div>
-
-          {/* Gwiazdki */}
-          <div className="flex flex-col gap-1">
-            <label className="text-xs uppercase opacity-70">Gwiazdki</label>
-            <select
-              className="border rounded-md px-2 py-1 text-sm bg-transparent"
-              value={hero.stars ?? ''}
+              className="field-input bg-transparent"
+              value={hero.blessing_level ?? ''}
               onChange={(e) =>
                 saveHero({
-                  stars: e.target.value ? Number(e.target.value) : null,
+                  blessing_level: e.target.value ? Number(e.target.value) : null,
                 } as Partial<Hero>)
               }
             >
               <option value="">—</option>
-              {STARS.map((s) => (
-                <option key={s} value={s}>
-                  {s}
+              {STARS.map((lvl) => (
+                <option key={lvl} value={lvl}>
+                  {lvl}
                 </option>
               ))}
             </select>
           </div>
-
-          {/* Asc */}
-          <div className="flex flex-col gap-1">
-            <label className="text-xs uppercase opacity-70">Asc</label>
-            <input
-              className="border rounded-md px-2 py-1 text-sm"
-              value={hero.asc || ''}
-              onChange={textInput('asc')}
-            />
-          </div>
-
-          {/* Blessing */}
-          <div className="flex flex-col gap-1">
-            <label className="text-xs uppercase opacity-70">Blessing</label>
-            <input
-              className="border rounded-md px-2 py-1 text-sm"
-              value={hero.blessing || ''}
-              onChange={textInput('blessing')}
-            />
-          </div>
         </div>
-      </div>
+      </section>
 
       {/* Statystyki */}
-      <div className="border rounded-xl p-4 space-y-3">
-        <h3 className="text-lg font-semibold">Statystyki</h3>
-        <div className="space-y-3">
+      <section className="hero-card space-y-3">
+        <h2 className="section-title">Statystyki</h2>
+        <div className="grid md:grid-cols-2 gap-4">
           {KEYS.map((k) => {
             const key = k.toLowerCase();
             const baseKey = `base_${key}`;
@@ -424,163 +505,170 @@ export default function HeroPage() {
             const isPct = k === 'CRATE' || k === 'CDMG';
 
             return (
-              <div key={k} className="grid md:grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs uppercase opacity-70">
-                    Bazowe {k}
-                  </label>
-                  <input
-                    type="number"
-                    className="border rounded-md px-2 py-1 text-sm"
-                    value={Number(hero[baseKey] ?? 0)}
-                    onChange={numInput(baseKey)}
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs uppercase opacity-70">
-                    Bonus {k}
-                    {isPct ? ' (%)' : ''}
-                  </label>
-                  <input
-                    type="number"
-                    className="border rounded-md px-2 py-1 text-sm"
-                    value={Number(hero[bonusKey] ?? 0)}
-                    onChange={numInput(bonusKey)}
-                  />
+              <div key={k} className="flex flex-col gap-2">
+                <div className="flex justify-between gap-3">
+                  <div className="flex-1">
+                    <label className="field-label">Bazowe {k}</label>
+                    <input
+                      type="number"
+                      className="field-input w-full"
+                      value={Number(hero[baseKey] ?? 0)}
+                      onChange={numInput(baseKey)}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="field-label">
+                      Bonus {k}
+                      {isPct ? ' (%)' : ''}
+                    </label>
+                    <input
+                      type="number"
+                      className="field-input w-full"
+                      value={Number(hero[bonusKey] ?? 0)}
+                      onChange={numInput(bonusKey)}
+                    />
+                  </div>
                 </div>
               </div>
             );
           })}
         </div>
-      </div>
+      </section>
 
-      {/* Umiejętności */}
-      <div className="border rounded-xl p-4 space-y-2">
-        <h3 className="text-lg font-semibold">Umiejętności (JSON quick edit)</h3>
+      {/* Blessing + Umiejętności */}
+      <section className="hero-card space-y-3">
+        <h2 className="section-title">Umiejętności (JSON quick edit)</h2>
         <textarea
-          className="border rounded-md px-2 py-1 text-sm w-full min-h-[120px] font-mono"
+          className="field-input font-mono min-h-[140px]"
           value={JSON.stringify(hero.skills || [], null, 2)}
           onChange={(e) => {
             try {
               const v = JSON.parse(e.target.value);
               saveHero({ skills: v } as Partial<Hero>);
             } catch {
-              // ignorujemy błędy – user może nadal pisać
+              // ignorujemy błędy parsowania
             }
           }}
         />
-      </div>
+      </section>
 
       {/* Ekwipunek */}
-      <div className="border rounded-xl p-4 space-y-3">
+      <section className="hero-card space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Ekwipunek</h3>
+          <h2 className="section-title">Ekwipunek</h2>
           <button
             type="button"
             onClick={addGear}
-            className="border rounded-md px-3 py-1 text-sm"
+            className="btn-forge"
           >
             + Dodaj item
           </button>
         </div>
 
-        <table className="w-full text-sm border-collapse">
-          <thead>
-            <tr className="border-b">
-              <th className="text-left py-1 px-2">Slot</th>
-              <th className="text-left py-1 px-2">Set</th>
-              <th className="text-left py-1 px-2">Rarity</th>
-              <th className="text-left py-1 px-2">Gw</th>
-              <th className="text-left py-1 px-2">Main</th>
-              <th className="text-left py-1 px-2">Val</th>
-              <th className="text-left py-1 px-2">Suby</th>
-            </tr>
-          </thead>
-          <tbody>
-            {gear.map((g) => (
-              <tr key={g.id} className="border-b">
-                <td className="py-1 px-2">
-                  <input
-                    className="border rounded-md px-1 py-0.5 text-xs"
-                    value={g.slot || ''}
-                    onChange={(e) =>
-                      supabaseUpdate('gear', g.id, { slot: e.target.value })
-                    }
-                  />
-                </td>
-                <td className="py-1 px-2">
-                  <input
-                    className="border rounded-md px-1 py-0.5 text-xs"
-                    value={g.set_key || ''}
-                    onChange={(e) =>
-                      supabaseUpdate('gear', g.id, { set_key: e.target.value })
-                    }
-                  />
-                </td>
-                <td className="py-1 px-2">
-                  <input
-                    className="border rounded-md px-1 py-0.5 text-xs"
-                    value={g.rarity || ''}
-                    onChange={(e) =>
-                      supabaseUpdate('gear', g.id, { rarity: e.target.value })
-                    }
-                  />
-                </td>
-                <td className="py-1 px-2">
-                  <input
-                    type="number"
-                    className="border rounded-md px-1 py-0.5 text-xs"
-                    value={g.stars ?? 0}
-                    onChange={(e) =>
-                      supabaseUpdate('gear', g.id, {
-                        stars: Number(e.target.value) || 0,
-                      })
-                    }
-                  />
-                </td>
-                <td className="py-1 px-2">
-                  <input
-                    className="border rounded-md px-1 py-0.5 text-xs"
-                    value={g.main_type || ''}
-                    onChange={(e) =>
-                      supabaseUpdate('gear', g.id, { main_type: e.target.value })
-                    }
-                  />
-                </td>
-                <td className="py-1 px-2">
-                  <input
-                    type="number"
-                    className="border rounded-md px-1 py-0.5 text-xs"
-                    value={g.main_value ?? 0}
-                    onChange={(e) =>
-                      supabaseUpdate('gear', g.id, {
-                        main_value: Number(e.target.value) || 0,
-                      })
-                    }
-                  />
-                </td>
-                <td className="py-1 px-2">
-                  <Substats
-                    gearId={g.id}
-                    items={subs[g.id] || []}
-                    onChange={load}
-                  />
-                </td>
+        {gear.length === 0 ? (
+          <p className="text-sm text-slate-200/70">
+            Ten bohater nie ma jeszcze żadnego ekwipunku.
+          </p>
+        ) : (
+          <table className="w-full text-sm border-collapse hero-table">
+            <thead>
+              <tr>
+                <th>Slot</th>
+                <th>Set</th>
+                <th>Rarity</th>
+                <th>Gw</th>
+                <th>Main</th>
+                <th>Val</th>
+                <th>Suby</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {gear.map((g) => (
+                <tr key={g.id}>
+                  <td>
+                    <input
+                      className="field-input text-xs"
+                      value={g.slot || ''}
+                      onChange={(e) =>
+                        supabaseUpdate('gear', g.id, { slot: e.target.value })
+                      }
+                    />
+                  </td>
+                  <td>
+                    <input
+                      className="field-input text-xs"
+                      value={g.set_key || ''}
+                      onChange={(e) =>
+                        supabaseUpdate('gear', g.id, { set_key: e.target.value })
+                      }
+                    />
+                  </td>
+                  <td>
+                    <input
+                      className="field-input text-xs"
+                      value={g.rarity || ''}
+                      onChange={(e) =>
+                        supabaseUpdate('gear', g.id, { rarity: e.target.value })
+                      }
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      className="field-input text-xs"
+                      value={g.stars ?? 0}
+                      onChange={(e) =>
+                        supabaseUpdate('gear', g.id, {
+                          stars: Number(e.target.value) || 0,
+                        })
+                      }
+                    />
+                  </td>
+                  <td>
+                    <input
+                      className="field-input text-xs"
+                      value={g.main_type || ''}
+                      onChange={(e) =>
+                        supabaseUpdate('gear', g.id, { main_type: e.target.value })
+                      }
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      className="field-input text-xs"
+                      value={g.main_value ?? 0}
+                      onChange={(e) =>
+                        supabaseUpdate('gear', g.id, {
+                          main_value: Number(e.target.value) || 0,
+                        })
+                      }
+                    />
+                  </td>
+                  <td>
+                    <Substats
+                      gearId={g.id}
+                      items={subs[g.id] || []}
+                      onChange={load}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </section>
 
       {/* Kalkulator */}
-      <div className="border rounded-xl p-4 space-y-2">
-        <h3 className="text-lg font-semibold">Kalkulator (live)</h3>
+      <section className="hero-card space-y-3">
+        <h2 className="section-title">Kalkulator (live)</h2>
         {statTotal ? (
           <div>
             <div className="grid md:grid-cols-3 gap-2 mb-2">
               {Object.entries(statTotal.T).map(([k, v]) => (
-                <div key={k}>
-                  <b>{k}</b>: {v}
+                <div key={k} className="flex items-center gap-2">
+                  <span className="font-semibold text-amber-200">{k}:</span>
+                  <span>{v}</span>
                 </div>
               ))}
             </div>
@@ -594,11 +682,11 @@ export default function HeroPage() {
             </div>
           </div>
         ) : (
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-slate-200/70">
             Uzupełnij statystyki bohatera, aby zobaczyć wynik.
           </p>
         )}
-      </div>
+      </section>
     </main>
   );
 }
@@ -641,13 +729,13 @@ function Substats({
       {rows.map((r) => (
         <div key={r.id} className="flex gap-1 mb-1">
           <input
-            className="border rounded-md px-1 py-0.5 text-xs"
+            className="field-input text-xs"
             value={r.type || ''}
             onChange={(e) => save(r.id, { type: e.target.value })}
           />
           <input
             type="number"
-            className="border rounded-md px-1 py-0.5 text-xs"
+            className="field-input text-xs"
             value={r.value ?? 0}
             onChange={(e) =>
               save(r.id, { value: Number(e.target.value) || 0 })
@@ -655,7 +743,7 @@ function Substats({
           />
           <button
             type="button"
-            className="border rounded-md px-2 py-0.5 text-xs"
+            className="btn-danger text-[10px] px-2"
             onClick={() => remove(r.id)}
           >
             x
@@ -664,7 +752,7 @@ function Substats({
       ))}
       <button
         type="button"
-        className="border rounded-md px-2 py-0.5 text-xs"
+        className="btn-ghost text-[11px] px-2"
         onClick={add}
       >
         + substat

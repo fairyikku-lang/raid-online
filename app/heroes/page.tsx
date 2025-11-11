@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { createBrowserSupabaseClient } from '@/lib/supabaseBrowserClient';
 
@@ -108,122 +109,123 @@ export default function HeroesPage() {
     router.push(`/heroes/${id}`);
   };
 
-  const goToEdit = (id: string) => {
-    router.push(`/heroes/edit/${id}`);
+  const goToView = (id: string) => {
+    router.push(`/heroes/${id}/view`);
   };
 
   return (
-    <main className="max-w-5xl mx-auto p-4 space-y-6">
-      <header>
-        <h1 className="text-3xl font-bold mb-2">Bohaterowie</h1>
-        <p className="text-sm mb-4">
-          Zarządzaj bohaterami – dodawaj, przeglądaj i usuwaj dane.
-        </p>
+    <main className="hero-page max-w-6xl mx-auto p-6 space-y-6">
+      <header className="flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-wide text-amber-300 drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">
+            Bohaterowie
+          </h1>
+          <p className="text-sm text-slate-200/70">
+            Zarządzaj bohaterami – dodawaj, przeglądaj i usuwaj dane.
+          </p>
+        </div>
       </header>
 
-      <section className="border rounded-md p-4 space-y-3">
-        <h2 className="text-lg font-semibold">Dodaj bohatera</h2>
-        <form onSubmit={handleAdd} className="space-y-3">
-          <div className="flex flex-col gap-1">
-            <label className="text-sm">Nazwa</label>
+      <section className="hero-card space-y-3">
+        <h2 className="section-title">Dodaj bohatera</h2>
+        <form onSubmit={handleAdd} className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+          <div className="flex flex-col gap-1 sm:col-span-2">
+            <label className="field-label">Nazwa</label>
             <input
-              className="border rounded-md px-2 py-1 text-sm"
+              className="field-input"
               placeholder="Kael, Trunda..."
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
-
           <div className="flex flex-col gap-1">
-            <label className="text-sm">Frakcja</label>
+            <label className="field-label">Frakcja</label>
             <input
-              className="border rounded-md px-2 py-1 text-sm"
+              className="field-input"
               placeholder="Dark Elves"
               value={faction}
               onChange={(e) => setFaction(e.target.value)}
             />
           </div>
-
           <div className="flex flex-col gap-1">
-            <label className="text-sm">Rzadkość</label>
+            <label className="field-label">Rzadkość</label>
             <input
-              className="border rounded-md px-2 py-1 text-sm"
+              className="field-input"
               placeholder="Rare, Epic, Legendary"
               value={rarity}
               onChange={(e) => setRarity(e.target.value)}
             />
           </div>
-
           <div className="flex flex-col gap-1">
-            <label className="text-sm">Poziom</label>
+            <label className="field-label">Poziom</label>
             <input
-              className="border rounded-md px-2 py-1 text-sm"
+              className="field-input"
               placeholder="60"
               value={level}
               onChange={(e) => setLevel(e.target.value)}
             />
           </div>
-
-          <button
-            type="submit"
-            disabled={saving}
-            className="border rounded-md px-4 py-2 text-sm font-medium disabled:opacity-60"
-          >
-            {saving ? 'Zapisywanie…' : 'Dodaj'}
-          </button>
-
-          {error && <p className="text-xs text-red-600">{error}</p>}
+          <div className="flex flex-col justify-end">
+            <button
+              type="submit"
+              disabled={saving}
+              className="btn-forge w-full"
+            >
+              {saving ? 'Zapisywanie…' : 'Dodaj'}
+            </button>
+          </div>
         </form>
+        {error && <p className="text-xs text-red-400">{error}</p>}
       </section>
 
-      <section className="border rounded-md p-4 space-y-3">
-        <h2 className="text-lg font-semibold">Lista bohaterów</h2>
+      <section className="hero-card space-y-3">
+        <h2 className="section-title">Lista bohaterów</h2>
 
         {loading ? (
-          <p className="text-sm text-gray-400">Ładowanie bohaterów…</p>
+          <p className="text-sm text-slate-200/70">Ładowanie bohaterów…</p>
         ) : heroes.length === 0 ? (
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-slate-200/70">
             Nie masz jeszcze żadnych bohaterów. Dodaj pierwszego 🙂
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse hero-table">
               <thead>
-                <tr className="border-b">
-                  <th className="text-left py-2 px-2">Nazwa</th>
-                  <th className="text-left py-2 px-2">Frakcja</th>
-                  <th className="text-left py-2 px-2">Rzadkość</th>
-                  <th className="text-left py-2 px-2">Poziom</th>
-                  <th className="text-left py-2 px-2">Akcje</th>
+                <tr>
+                  <th>Nazwa</th>
+                  <th>Frakcja</th>
+                  <th>Rzadkość</th>
+                  <th>Poziom</th>
+                  <th>Akcje</th>
                 </tr>
               </thead>
               <tbody>
                 {heroes.map((hero) => (
-                  <tr key={hero.id} className="border-b last:border-0">
-                    <td className="py-2 px-2 font-medium">{hero.name}</td>
-                    <td className="py-2 px-2">{hero.faction || '—'}</td>
-                    <td className="py-2 px-2">{hero.rarity || '—'}</td>
-                    <td className="py-2 px-2">{hero.level ?? '—'}</td>
-                    <td className="py-2 px-2">
+                  <tr key={hero.id}>
+                    <td>{hero.name}</td>
+                    <td>{hero.faction || '—'}</td>
+                    <td>{hero.rarity || '—'}</td>
+                    <td>{hero.level ?? '—'}</td>
+                    <td>
                       <div className="flex flex-wrap gap-2">
                         <button
                           type="button"
+                          onClick={() => goToView(hero.id)}
+                          className="btn-ghost"
+                        >
+                          Podgląd
+                        </button>
+                        <button
+                          type="button"
                           onClick={() => goToManage(hero.id)}
-                          className="border rounded-md px-2 py-1 text-xs"
+                          className="btn-ghost"
                         >
                           Zarządzaj
                         </button>
                         <button
                           type="button"
-                          onClick={() => goToEdit(hero.id)}
-                          className="border rounded-md px-2 py-1 text-xs"
-                        >
-                          Edytuj
-                        </button>
-                        <button
-                          type="button"
                           onClick={() => handleDelete(hero.id)}
-                          className="border border-red-500 text-red-600 rounded-md px-2 py-1 text-xs"
+                          className="btn-danger"
                         >
                           Usuń
                         </button>
