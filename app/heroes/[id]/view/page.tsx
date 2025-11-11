@@ -6,6 +6,7 @@ import { createBrowserSupabaseClient } from '@/lib/supabaseBrowserClient';
 import Image from 'next/image';
 
 const KEYS = ['HP', 'ATK', 'DEF', 'SPD', 'CRATE', 'CDMG', 'RES', 'ACC'] as const;
+const CALC_ORDER = ['HP', 'ATK', 'DEF', 'SPD', 'RES', 'ACC', 'CRATE', 'CDMG'] as const;
 
 const STAT_ICONS: Record<string, { src: string; alt: string }> = {
   HP:   { src: '/icons/stat-hp.png',    alt: 'HP' },
@@ -197,6 +198,11 @@ export default function HeroViewPage() {
     );
   }
 
+  const skillsEmpty =
+    !hero.skills ||
+    (Array.isArray(hero.skills) && hero.skills.length === 0) ||
+    (typeof hero.skills === 'string' && hero.skills.trim() === '');
+
   return (
     <main className="hero-page max-w-6xl mx-auto p-6 space-y-6">
       <button
@@ -207,6 +213,7 @@ export default function HeroViewPage() {
         ← Powrót
       </button>
 
+      {/* GÓRNY PANEL: portret + dane + umiejętności po prawej */}
       <div className="hero-grid">
         {/* Portret */}
         <aside className="hero-portrait">
@@ -219,214 +226,235 @@ export default function HeroViewPage() {
           </div>
         </aside>
 
-        {/* Dane główne */}
-        <section className="hero-card space-y-3">
-          <h1 className="hero-name">{hero.name}</h1>
-          <p className="hero-subtitle">
-            {hero.faction || 'Brak frakcji'} • {hero.rarity || 'Brak rzadkości'}
-          </p>
-          <div className="grid md:grid-cols-2 gap-2 text-sm mt-2">
-            <div>
-              Affinity:{' '}
-              <span className="text-amber-200">{hero.affinity || '—'}</span>
+        {/* Dane główne + umiejętności */}
+        <section className="hero-card">
+          <div className="grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-10 items-start">
+            {/* Dane bohatera */}
+            <div className="space-y-3">
+              <h1 className="hero-name">{hero.name}</h1>
+              <p className="hero-subtitle">
+                {hero.faction || 'Brak frakcji'} • {hero.rarity || 'Brak rzadkości'}
+              </p>
+              <div className="grid md:grid-cols-2 gap-2 text-sm mt-2">
+                <div>
+                  Affinity:{' '}
+                  <span className="text-amber-200">{hero.affinity || '—'}</span>
+                </div>
+                <div>
+                  Typ:{' '}
+                  <span className="text-amber-200">{hero.type || '—'}</span>
+                </div>
+                <div>
+                  Poziom:{' '}
+                  <span className="text-amber-200">{hero.level ?? '—'}</span>
+                </div>
+                <div>
+                  Gwiazdki:{' '}
+                  <span className="text-amber-200">{hero.stars ?? '—'}</span>
+                </div>
+                <div>
+                  Asc:{' '}
+                  <span className="text-amber-200">{hero.asc ?? '—'}</span>
+                </div>
+                <div>
+                  Blessing:{' '}
+                  <span className="text-amber-200">
+                    {hero.blessing || '—'}{' '}
+                    {hero.blessing_level ? `(lvl ${hero.blessing_level})` : ''}
+                  </span>
+                </div>
+              </div>
             </div>
-            <div>
-              Typ:{' '}
-              <span className="text-amber-200">{hero.type || '—'}</span>
-            </div>
-            <div>
-              Poziom:{' '}
-              <span className="text-amber-200">{hero.level ?? '—'}</span>
-            </div>
-            <div>
-              Gwiazdki:{' '}
-              <span className="text-amber-200">{hero.stars ?? '—'}</span>
-            </div>
-            <div>
-              Asc:{' '}
-              <span className="text-amber-200">{hero.asc ?? '—'}</span>
-            </div>
-            <div>
-              Blessing:{' '}
-              <span className="text-amber-200">
-                {hero.blessing || '—'}{' '}
-                {hero.blessing_level ? `(lvl ${hero.blessing_level})` : ''}
-              </span>
+
+            {/* Umiejętności – po prawej stronie */}
+            <div className="space-y-2">
+              <h2 className="section-title">Umiejętności</h2>
+              {skillsEmpty ? (
+                <p className="text-xs text-slate-200/70 italic">
+                  Brak zdefiniowanych umiejętności dla tego bohatera.
+                </p>
+              ) : (
+                <pre className="field-input font-mono whitespace-pre-wrap text-xs min-h-[120px]">
+                  {JSON.stringify(hero.skills, null, 2)}
+                </pre>
+              )}
             </div>
           </div>
         </section>
       </div>
 
-{/* Statystyki */}
-<section className="hero-card space-y-3 mt-2">
-  <h2 className="section-title">Statystyki</h2>
+      {/* STATYSTYKI + KALKULATOR + EKWIPUNEK W JEDNYM BLOKU */}
+      <section className="hero-card space-y-3 mt-2">
+        <h2 className="section-title">Statystyki</h2>
 
-  <div className="hero-stats-columns mt-3 text-sm">
-    {/* BAZOWE */}
-    <div>
-      <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
-        Bazowe statystyki
-      </h3>
-
-      <div className="space-y-2.5">
-        {KEYS.map((k) => {
-          const key = k.toLowerCase();
-          const baseKey = `base_${key}`;
-          const isPct = k === 'CRATE' || k === 'CDMG';
-          const val = Number(hero[baseKey] ?? 0);
-          const iconInfo = STAT_ICONS[k];
-
-          return (
-            <div
-              key={`base-${k}`}
-              className="flex items-center justify-between py-1"
-            >
-              <div className="flex items-center gap-2 text-[0.85rem]">
-                {iconInfo && (
-                  <Image
-                    src={iconInfo.src}
-                    alt={iconInfo.alt}
-                    width={18}
-                    height={18}
-                    className="opacity-90"
-                  />
-                )}
-                <span>Bazowe {k}</span>
-              </div>
-              <span className="font-semibold text-[0.9rem]">
-                {val}
-                {isPct ? ' %' : ''}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-
-    {/* BONUSOWE */}
-    <div>
-      <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
-        Bonusowe statystyki
-      </h3>
-
-      <div className="space-y-2.5">
-        {KEYS.map((k) => {
-          const key = k.toLowerCase();
-          const bonusKey = `bonus_${key}`;
-          const isPct = k === 'CRATE' || k === 'CDMG';
-          const val = Number(hero[bonusKey] ?? 0);
-          const iconInfo = STAT_ICONS[k];
-
-          return (
-            <div
-              key={`bonus-${k}`}
-              className="flex items-center justify-between py-1"
-            >
-              <div className="flex items-center gap-2 text-[0.85rem]">
-                {iconInfo && (
-                  <Image
-                    src={iconInfo.src}
-                    alt={iconInfo.alt}
-                    width={18}
-                    height={18}
-                    className="opacity-90"
-                  />
-                )}
-                <span>
-                  Bonus {k}
-                  {isPct ? ' (%)' : ''}
-                </span>
-              </div>
-              <span className="font-semibold text-[0.9rem]">
-                {val}
-                {isPct ? ' %' : ''}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  </div>
-</section>
-
-      {/* Umiejętności */}
-      <section className="hero-card space-y-3">
-        <h2 className="section-title">Umiejętności</h2>
-        <pre className="field-input font-mono whitespace-pre-wrap text-xs">
-          {JSON.stringify(hero.skills || [], null, 2)}
-        </pre>
-      </section>
-
-      {/* Ekwipunek */}
-      <section className="hero-card space-y-3">
-        <h2 className="section-title">Ekwipunek</h2>
-        {gear.length === 0 ? (
-          <p className="text-sm text-slate-200/70">
-            Ten bohater nie ma jeszcze żadnego ekwipunku.
-          </p>
-        ) : (
-          <table className="w-full text-sm border-collapse hero-table">
-            <thead>
-              <tr>
-                <th>Slot</th>
-                <th>Set</th>
-                <th>Rarity</th>
-                <th>Gw</th>
-                <th>Main</th>
-                <th>Val</th>
-                <th>Suby</th>
-              </tr>
-            </thead>
-            <tbody>
-              {gear.map((g) => (
-                <tr key={g.id}>
-                  <td>{g.slot || '—'}</td>
-                  <td>{g.set_key || '—'}</td>
-                  <td>{g.rarity || '—'}</td>
-                  <td>{g.stars ?? '—'}</td>
-                  <td>{g.main_type || '—'}</td>
-                  <td>{g.main_value ?? '—'}</td>
-                  <td>
-                    {(subs[g.id] || []).map((s) => (
-                      <div key={s.id}>
-                        {s.type || '—'} {s.value ?? ''}
-                      </div>
-                    ))}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </section>
-
-      {/* Kalkulator */}
-      <section className="hero-card space-y-3">
-        <h2 className="section-title">Kalkulator (live)</h2>
-        {statTotal ? (
+        <div className="hero-stats-columns mt-3 text-sm">
+          {/* BAZOWE */}
           <div>
-            <div className="grid md:grid-cols-3 gap-2 mb-2 text-sm">
-              {Object.entries(statTotal.T).map(([k, v]) => (
-                <div key={k} className="flex items-center gap-2">
-                  <span className="font-semibold text-amber-200">{k}:</span>
-                  <span>{v}</span>
-                </div>
-              ))}
-            </div>
-            <div className="text-xs opacity-80">
-              z gearu — flat: HP {statTotal.sum.flat.HP}, ATK{' '}
-              {statTotal.sum.flat.ATK}, DEF {statTotal.sum.flat.DEF}, SPD{' '}
-              {statTotal.sum.flat.SPD}, RES {statTotal.sum.flat.RES}, ACC{' '}
-              {statTotal.sum.flat.ACC} | %: HP {statTotal.sum.pct.HP}, ATK{' '}
-              {statTotal.sum.pct.ATK}, DEF {statTotal.sum.pct.DEF}, C.RATE{' '}
-              {statTotal.sum.pct.CRATE}, C.DMG {statTotal.sum.pct.CDMG}
+            <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
+              Bazowe statystyki
+            </h3>
+
+            <div className="space-y-2.5">
+              {KEYS.map((k) => {
+                const key = k.toLowerCase();
+                const baseKey = `base_${key}`;
+                const isPct = k === 'CRATE' || k === 'CDMG';
+                const val = Number(hero[baseKey] ?? 0);
+                const iconInfo = STAT_ICONS[k];
+
+                return (
+                  <div
+                    key={`base-${k}`}
+                    className="flex items-center justify-between py-1"
+                  >
+                    <div className="flex items-center gap-2 text-[0.85rem]">
+                      {iconInfo && (
+                        <Image
+                          src={iconInfo.src}
+                          alt={iconInfo.alt}
+                          width={18}
+                          height={18}
+                          className="opacity-90"
+                        />
+                      )}
+                      <span>Bazowe {k}</span>
+                    </div>
+                    <span className="font-semibold text-[0.9rem]">
+                      {val}
+                      {isPct ? ' %' : ''}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
-        ) : (
-          <p className="text-sm text-slate-200/70">
-            Uzupełnij statystyki bohatera, aby zobaczyć wynik.
-          </p>
-        )}
+
+          {/* BONUSOWE */}
+          <div>
+            <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
+              Bonusowe statystyki
+            </h3>
+
+            <div className="space-y-2.5">
+              {KEYS.map((k) => {
+                const key = k.toLowerCase();
+                const bonusKey = `bonus_${key}`;
+                const isPct = k === 'CRATE' || k === 'CDMG';
+                const val = Number(hero[bonusKey] ?? 0);
+                const iconInfo = STAT_ICONS[k];
+
+                return (
+                  <div
+                    key={`bonus-${k}`}
+                    className="flex items-center justify-between py-1"
+                  >
+                    <div className="flex items-center gap-2 text-[0.85rem]">
+                      {iconInfo && (
+                        <Image
+                          src={iconInfo.src}
+                          alt={iconInfo.alt}
+                          width={18}
+                          height={18}
+                          className="opacity-90"
+                        />
+                      )}
+                      <span>
+                        Bonus {k}
+                        {isPct ? ' (%)' : ''}
+                      </span>
+                    </div>
+                    <span className="font-semibold text-[0.9rem]">
+                      {val}
+                      {isPct ? ' %' : ''}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* KALKULATOR (LIVE) – kolumna 3 */}
+          <div>
+            <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
+              Kalkulator (live)
+            </h3>
+
+            {statTotal ? (
+              <div className="space-y-2 text-[0.85rem]">
+                {CALC_ORDER.map((k) => {
+                  const value = statTotal.T[k];
+                  const isPct = k === 'CRATE' || k === 'CDMG';
+                  return (
+                    <div
+                      key={`calc-${k}`}
+                      className="flex items-center justify-between"
+                    >
+                      <span className="text-slate-200/90">{k}</span>
+                      <span className="font-semibold">
+                        {value}
+                        {isPct ? ' %' : ''}
+                      </span>
+                    </div>
+                  );
+                })}
+                <div className="text-[0.7rem] text-slate-200/70 pt-2">
+                  z gearu — flat: HP {statTotal.sum.flat.HP}, ATK{' '}
+                  {statTotal.sum.flat.ATK}, DEF {statTotal.sum.flat.DEF}, SPD{' '}
+                  {statTotal.sum.flat.SPD}, RES {statTotal.sum.flat.RES}, ACC{' '}
+                  {statTotal.sum.flat.ACC} | %: HP {statTotal.sum.pct.HP}, ATK{' '}
+                  {statTotal.sum.pct.ATK}, DEF {statTotal.sum.pct.DEF}, C.RATE{' '}
+                  {statTotal.sum.pct.CRATE}, C.DMG {statTotal.sum.pct.CDMG}
+                </div>
+              </div>
+            ) : (
+              <p className="text-xs text-slate-200/70">
+                Uzupełnij statystyki bohatera, aby zobaczyć wynik.
+              </p>
+            )}
+          </div>
+
+          {/* EKWIPUNEK – kolumna 4 */}
+          <div>
+            <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
+              Ekwipunek
+            </h3>
+
+            {gear.length === 0 ? (
+              <p className="text-xs text-slate-200/70">
+                Ten bohater nie ma jeszcze żadnego ekwipunku.
+              </p>
+            ) : (
+              <div className="space-y-2 text-[0.8rem]">
+                {gear.map((g) => {
+                  const subList = (subs[g.id] || [])
+                    .map((s) => `${s.type || '—'} ${s.value ?? ''}`)
+                    .join(', ');
+
+                  return (
+                    <div
+                      key={g.id}
+                      className="border border-slate-700/40 rounded-lg px-2 py-1.5 bg-slate-900/40"
+                    >
+                      <div className="font-semibold text-amber-100 text-xs">
+                        {g.slot || 'Slot'} • {g.set_key || 'Set'}{' '}
+                        {g.stars ? `• ${g.stars}★` : ''}{' '}
+                        {g.rarity ? `• ${g.rarity}` : ''}
+                      </div>
+                      <div className="text-[0.75rem]">
+                        Main: {g.main_type || '—'} {g.main_value ?? ''}
+                      </div>
+                      {subList && (
+                        <div className="text-[0.7rem] text-slate-200/70">
+                          Suby: {subList}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
       </section>
     </main>
   );
