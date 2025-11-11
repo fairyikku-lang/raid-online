@@ -266,24 +266,24 @@ export default function HeroViewPage() {
               </div>
             </div>
 
-            {/* Umiejętności – kolumna prawa, w osobnej karcie */}
-            <div className="w-[42%] min-w-[280px]">
-              <div className="border border-slate-700/60 rounded-xl px-4 py-3 bg-slate-900/40 shadow-[0_0_18px_rgba(0,0,0,0.45)]">
-                <h2 className="text-[0.75rem] font-semibold tracking-[0.18em] uppercase text-amber-200 mb-3">
-                  Umiejętności
-                </h2>
+           {/* Umiejętności – kolumna prawa */}
+<div className="w-[42%] min-w-[280px] flex flex-col justify-start">
+  <div className="border border-slate-700/50 bg-slate-900/50 rounded-2xl p-5 shadow-[0_0_12px_rgba(0,0,0,0.4)] space-y-3">
+    <h2 className="text-base font-bold tracking-wider text-amber-300 border-b border-slate-700/60 pb-2">
+      UMIEJĘTNOŚCI
+    </h2>
 
-                {skillsEmpty ? (
-                  <p className="text-xs text-slate-200/70 italic leading-relaxed">
-                    Brak zdefiniowanych umiejętności dla tego bohatera.
-                  </p>
-                ) : (
-                  <pre className="font-mono text-xs leading-relaxed whitespace-pre-wrap text-slate-100 max-h-56 overflow-y-auto">
-                    {JSON.stringify(hero.skills, null, 2)}
-                  </pre>
-                )}
-              </div>
-            </div>
+    {skillsEmpty ? (
+      <p className="text-[0.9rem] text-slate-200/80 italic">
+        Brak zdefiniowanych umiejętności dla tego bohatera.
+      </p>
+    ) : (
+      <pre className="font-mono text-[0.8rem] text-slate-100 leading-relaxed whitespace-pre-wrap max-h-60 overflow-y-auto">
+        {JSON.stringify(hero.skills, null, 2)}
+      </pre>
+    )}
+  </div>
+</div>
           </div>
         </section>
       </div>
