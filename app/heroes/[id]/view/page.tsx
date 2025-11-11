@@ -257,100 +257,102 @@ export default function HeroViewPage() {
         </section>
       </div>
 
-      {/* Statystyki */}
-      <section className="hero-card space-y-3 mt-2">
-        <h2 className="section-title">Statystyki</h2>
+    {/* Statystyki */}
+<section className="hero-card space-y-3 mt-2">
+  <h2 className="section-title">Statystyki</h2>
 
-        <div className="flex flex-row justify-between gap-20 mt-2 text-sm items-start">
-          {/* BAZOWE */}
-          <div className="flex-1 min-w-[260px] max-w-[300px]">
-            <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
-              Bazowe statystyki
-            </h3>
+  {/* GRID 3 kolumny: bazowe | odstęp | bonusowe */}
+  <div className="grid grid-cols-[300px_120px_300px] items-start mt-2 text-sm">
 
-            <div className="space-y-2.5">
-              {KEYS.map((k) => {
-                const key = k.toLowerCase();
-                const baseKey = `base_${key}`;
-                const isPct = k === 'CRATE' || k === 'CDMG';
-                const val = Number(hero[baseKey] ?? 0);
-                const iconInfo = STAT_ICONS[k];
+    {/* BAZOWE */}
+    <div>
+      <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
+        Bazowe statystyki
+      </h3>
 
-                return (
-                  <div
-                    key={`base-${k}`}
-                    className="flex items-center justify-between py-1"
-                  >
-                    <div className="flex items-center gap-2 text-[0.85rem]">
-                      {iconInfo && (
-                        <Image
-                          src={iconInfo.src}
-                          alt={iconInfo.alt}
-                          width={18}
-                          height={18}
-                          className="opacity-90"
-                        />
-                      )}
-                      <span>Bazowe {k}</span>
-                    </div>
-                    <span className="font-semibold text-[0.9rem]">
-                      {val}
-                      {isPct ? ' %' : ''}
-                    </span>
-                  </div>
-                );
-              })}
+      <div className="space-y-2.5">
+        {KEYS.map((k) => {
+          const key = k.toLowerCase();
+          const baseKey = `base_${key}`;
+          const isPct = k === 'CRATE' || k === 'CDMG';
+          const val = Number(hero[baseKey] ?? 0);
+          const iconInfo = STAT_ICONS[k];
+
+          return (
+            <div
+              key={`base-${k}`}
+              className="flex items-center justify-between py-1"
+            >
+              <div className="flex items-center gap-2 text-[0.85rem]">
+                {iconInfo && (
+                  <Image
+                    src={iconInfo.src}
+                    alt={iconInfo.alt}
+                    width={18}
+                    height={18}
+                    className="opacity-90"
+                  />
+                )}
+                <span>Bazowe {k}</span>
+              </div>
+              <span className="font-semibold text-[0.9rem]">
+                {val}
+                {isPct ? ' %' : ''}
+              </span>
             </div>
-          </div>
+          );
+        })}
+      </div>
+    </div>
 
-          {/* SPACER – przesuwa bonusowe statystyki bardziej w prawo */}
-          <div className="w-[6rem]" />
+    {/* ŚRODKOWY SPACER – daje odstęp między kolumnami */}
+    <div className="border-l border-amber-900/30 h-full mx-auto" />
 
-          {/* BONUSOWE */}
-          <div className="flex-1 min-w-[260px] max-w-[300px]">
-            <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
-              Bonusowe statystyki
-            </h3>
+    {/* BONUSOWE */}
+    <div>
+      <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
+        Bonusowe statystyki
+      </h3>
 
-            <div className="space-y-2.5">
-              {KEYS.map((k) => {
-                const key = k.toLowerCase();
-                const bonusKey = `bonus_${key}`;
-                const isPct = k === 'CRATE' || k === 'CDMG';
-                const val = Number(hero[bonusKey] ?? 0);
-                const iconInfo = STAT_ICONS[k];
+      <div className="space-y-2.5">
+        {KEYS.map((k) => {
+          const key = k.toLowerCase();
+          const bonusKey = `bonus_${key}`;
+          const isPct = k === 'CRATE' || k === 'CDMG';
+          const val = Number(hero[bonusKey] ?? 0);
+          const iconInfo = STAT_ICONS[k];
 
-                return (
-                  <div
-                    key={`bonus-${k}`}
-                    className="flex items-center justify-between py-1"
-                  >
-                    <div className="flex items-center gap-2 text-[0.85rem]">
-                      {iconInfo && (
-                        <Image
-                          src={iconInfo.src}
-                          alt={iconInfo.alt}
-                          width={18}
-                          height={18}
-                          className="opacity-90"
-                        />
-                      )}
-                      <span>
-                        Bonus {k}
-                        {isPct ? ' (%)' : ''}
-                      </span>
-                    </div>
-                    <span className="font-semibold text-[0.9rem]">
-                      {val}
-                      {isPct ? ' %' : ''}
-                    </span>
-                  </div>
-                );
-              })}
+          return (
+            <div
+              key={`bonus-${k}`}
+              className="flex items-center justify-between py-1"
+            >
+              <div className="flex items-center gap-2 text-[0.85rem]">
+                {iconInfo && (
+                  <Image
+                    src={iconInfo.src}
+                    alt={iconInfo.alt}
+                    width={18}
+                    height={18}
+                    className="opacity-90"
+                  />
+                )}
+                <span>
+                  Bonus {k}
+                  {isPct ? ' (%)' : ''}
+                </span>
+              </div>
+              <span className="font-semibold text-[0.9rem]">
+                {val}
+                {isPct ? ' %' : ''}
+              </span>
             </div>
-          </div>
-        </div>
-      </section>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Umiejętności */}
       <section className="hero-card space-y-3">
