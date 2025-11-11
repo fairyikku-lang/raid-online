@@ -270,20 +270,18 @@
 .hero-table tbody tr:hover {
   background: rgba(30, 64, 175, 0.2);
 }
-/* Dwie kolumny statystyk obok siebie:
-   lewa = bazowe, prawa = bonusowe.
-   Cały blok ma stałą szerokość i startuje od lewej. */
+/* 4 kolumny: Bazowe | Bonusowe | Kalkulator | Ekwipunek */
 .hero-stats-columns {
   display: grid;
-  grid-template-columns: 260px 260px; /* stała szerokość obu kolumn */
-  column-gap: 3rem;                  /* odstęp między bazowymi i bonusowymi */
+  grid-template-columns: 260px 260px 260px 260px; /* stałe szerokości */
+  column-gap: 2.5rem;
   align-items: flex-start;
 }
 
-/* Na wąskich ekranach jedna pod drugą */
-@media (max-width: 900px) {
+/* Na wąskich ekranach wszystko schodzi jedna pod drugą */
+@media (max-width: 1100px) {
   .hero-stats-columns {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     row-gap: 2.5rem;
   }
 }
