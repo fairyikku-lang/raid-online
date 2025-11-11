@@ -302,48 +302,47 @@ export default function HeroViewPage() {
             })}
           </div>
 
-          {/* BONUSOWE */}
-          <div className="flex-1 min-w-[220px] max-w-[280px]">
-            <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
-              Bonusowe statystyki
-            </h3>
+         {/* BONUSOWE */}
+<div className="flex-1 min-w-[260px] max-w-[300px] ml-[6rem]">
+  {/* 🔹 przesunięcie kolumny bonusowych statystyk w prawo */}
+  <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
+    Bonusowe statystyki
+  </h3>
 
-            {KEYS.map((k) => {
-              const key = k.toLowerCase();
-              const bonusKey = `bonus_${key}`;
-              const isPct = k === 'CRATE' || k === 'CDMG';
-              const val = Number(hero[bonusKey] ?? 0);
-              const iconInfo = STAT_ICONS[k];
+  <div className="space-y-2.5">
+    {KEYS.map((k) => {
+      const key = k.toLowerCase();
+      const bonusKey = `bonus_${key}`;
+      const isPct = k === 'CRATE' || k === 'CDMG';
+      const val = Number(hero[bonusKey] ?? 0);
+      const iconInfo = STAT_ICONS[k];
 
-              return (
-                <div
-                  key={`bonus-${k}`}
-                  className="flex items-center justify-between py-0.5"
-                >
-                  <div className="flex items-center gap-2 text-[0.8rem]">
-                    {iconInfo && (
-                      <Image
-                        src={iconInfo.src}
-                        alt={iconInfo.alt}
-                        width={18}
-                        height={18}
-                        className="opacity-90"
-                      />
-                    )}
-                    <span>
-                      Bonus {k}
-                      {isPct ? ' (%)' : ''}
-                    </span>
-                  </div>
-                  <span className="font-semibold">
-                    {val}
-                    {isPct ? ' %' : ''}
-                  </span>
-                </div>
-              );
-            })}
+      return (
+        <div
+          key={`bonus-${k}`}
+          className="flex items-center justify-between py-1"
+        >
+          <div className="flex items-center gap-2 text-[0.85rem]">
+            {iconInfo && (
+              <Image
+                src={iconInfo.src}
+                alt={iconInfo.alt}
+                width={18}
+                height={18}
+                className="opacity-90"
+              />
+            )}
+            <span>Bonus {k}{isPct ? ' (%)' : ''}</span>
           </div>
+          <span className="font-semibold text-[0.9rem]">
+            {val}
+            {isPct ? ' %' : ''}
+          </span>
         </div>
+      );
+    })}
+  </div>
+</div>
       </section>
 
       {/* Umiejętności */}
