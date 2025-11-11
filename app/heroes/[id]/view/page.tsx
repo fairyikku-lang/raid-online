@@ -9,14 +9,14 @@ const KEYS = ['HP', 'ATK', 'DEF', 'SPD', 'CRATE', 'CDMG', 'RES', 'ACC'] as const
 const CALC_ORDER = ['HP', 'ATK', 'DEF', 'SPD', 'RES', 'ACC', 'CRATE', 'CDMG'] as const;
 
 const STAT_ICONS: Record<string, { src: string; alt: string }> = {
-  HP:   { src: '/icons/stat-hp.png',    alt: 'HP' },
-  ATK:  { src: '/icons/stat-atk.png',   alt: 'Atak' },
-  DEF:  { src: '/icons/stat-def.png',   alt: 'Obrona' },
-  SPD:  { src: '/icons/stat-spd.png',   alt: 'Prędkość' },
-  RES:  { src: '/icons/stat-res.png',   alt: 'Resist' },
-  ACC:  { src: '/icons/stat-acc.png',   alt: 'Accuracy' },
-  CRATE:{ src: '/icons/stat-crate.png', alt: 'Crit Rate' },
-  CDMG: { src: '/icons/stat-cdmg.png',  alt: 'Crit Damage' },
+  HP: { src: '/icons/stat-hp.png', alt: 'HP' },
+  ATK: { src: '/icons/stat-atk.png', alt: 'Atak' },
+  DEF: { src: '/icons/stat-def.png', alt: 'Obrona' },
+  SPD: { src: '/icons/stat-spd.png', alt: 'Prędkość' },
+  RES: { src: '/icons/stat-res.png', alt: 'Resist' },
+  ACC: { src: '/icons/stat-acc.png', alt: 'Accuracy' },
+  CRATE: { src: '/icons/stat-crate.png', alt: 'Crit Rate' },
+  CDMG: { src: '/icons/stat-cdmg.png', alt: 'Crit Damage' },
 };
 
 type Hero = {
@@ -226,7 +226,7 @@ export default function HeroViewPage() {
           </div>
         </aside>
 
-         {/* Karta bohatera: lewa część dane, prawa umiejętności */}
+        {/* Karta bohatera: lewa część dane, prawa umiejętności */}
         <section className="hero-card">
           <div className="flex gap-10 items-start">
             {/* Dane bohatera – kolumna lewa */}
@@ -281,8 +281,9 @@ export default function HeroViewPage() {
             </div>
           </div>
         </section>
+      </div>
 
-      {/* STATYSTYKI + KALKULATOR + EKWIPUNEK W JEDNYM BLOKU */}
+      {/* STATYSTYKI + KALKULATOR + EKWIPUNEK */}
       <section className="hero-card space-y-3 mt-2">
         <h2 className="section-title">Statystyki</h2>
 
@@ -372,7 +373,7 @@ export default function HeroViewPage() {
             </div>
           </div>
 
-          {/* KALKULATOR (LIVE) – kolumna 3 */}
+          {/* KALKULATOR (LIVE) */}
           <div>
             <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
               Kalkulator (live)
@@ -412,7 +413,7 @@ export default function HeroViewPage() {
             )}
           </div>
 
-          {/* EKWIPUNEK – kolumna 4 */}
+          {/* EKWIPUNEK */}
           <div>
             <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
               Ekwipunek
