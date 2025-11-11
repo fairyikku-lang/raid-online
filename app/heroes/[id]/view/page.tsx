@@ -232,35 +232,31 @@ export default function HeroViewPage() {
 
       {/* Statystyki */}
       <section className="hero-card space-y-3">
-        <h2 className="section-title">Statystyki</h2>
-        <div className="grid md:grid-cols-2 gap-4 text-sm">
-          {KEYS.map((k) => {
-            const key = k.toLowerCase();
-            const baseKey = `base_${key}`;
-            const bonusKey = `bonus_${key}`;
-            const isPct = k === 'CRATE' || k === 'CDMG';
-
-            return (
-              <div key={k} className="flex justify-between gap-4">
-                <div className="flex-1">
-                  <div className="text-xs opacity-70">Bazowe {k}</div>
-                  <div className="font-semibold">
-                    {Number(hero[baseKey] ?? 0)}
-                    {isPct ? ' %' : ''}
-                  </div>
-                </div>
-                <div className="flex-1 text-right">
-                  <div className="text-xs opacity-70">Bonus {k}{isPct ? ' (%)' : ''}</div>
-                  <div className="font-semibold">
-                    {Number(hero[bonusKey] ?? 0)}
-                    {isPct ? ' %' : ''}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+  <h2 className="section-title">Statystyki</h2>
+  <div className="grid md:grid-cols-2 gap-4 text-sm">
+    {KEYS.map((k) => {
+      ...
+      return (
+        <div key={k} className="flex justify-between gap-4">
+          <div className="flex-1">
+            <div className="text-xs opacity-70">Bazowe {k}</div>
+            <div className="font-semibold">
+              {Number(hero[baseKey] ?? 0)}
+              {isPct ? ' %' : ''}
+            </div>
+          </div>
+          <div className="flex-1 text-right">
+            <div className="text-xs opacity-70">Bonus {k}{isPct ? ' (%)' : ''}</div>
+            <div className="font-semibold">
+              {Number(hero[bonusKey] ?? 0)}
+              {isPct ? ' %' : ''}
+            </div>
+          </div>
         </div>
-      </section>
+      );
+    })}
+  </div>
+</section>
 
       {/* Umiejętności */}
       <section className="hero-card space-y-3">
