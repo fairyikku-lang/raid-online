@@ -245,67 +245,148 @@ export default function HeroViewPage() {
       </div>
 
      {/* Statystyki */}
-      <section className="hero-card space-y-3">
-        <h2 className="section-title">Statystyki</h2>
+<section className="hero-card space-y-3">
+  <h2 className="section-title">Statystyki</h2>
 
-        <div className="grid md:grid-cols-2 gap-10 mt-2 text-sm">
-          {/* Kolumna bazowa */}
-          <div>
-            <div className="text-xs opacity-70 tracking-[0.18em] uppercase mb-2">
-              Bazowe statystyki
+  <div className="grid md:grid-cols-2 gap-12 mt-4 text-sm">
+    {/* BAZOWE */}
+    <div>
+      <div className="flex items-center gap-2 mb-3">
+        <div className="w-2 h-2 bg-amber-400 rounded-full shadow-[0_0_10px_#fcd34d]" />
+        <h3 className="font-semibold text-amber-300 tracking-wider text-xs uppercase">
+          Bazowe statystyki
+        </h3>
+      </div>
+
+      {KEYS.map((k) => {
+        const key = k.toLowerCase();
+        const baseKey = `base_${key}`;
+        const isPct = k === 'CRATE' || k === 'CDMG';
+        const val = Number(hero[baseKey] ?? 0);
+
+        const icon =
+          k === 'CRATE' || k === 'CDMG' ? (
+            // miecze
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-4 h-4 text-red-400"
+            >
+              <path d="M2 21l9-9m2 0l9 9M2 21l9-9 2 2 9-9" />
+            </svg>
+          ) : k === 'RES' ? (
+            // zbroja
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              className="w-4 h-4 text-slate-300"
+            >
+              <path d="M12 2l7 3v5c0 5-3 9-7 11-4-2-7-6-7-11V5l7-3z" />
+            </svg>
+          ) : k === 'ACC' ? (
+            // oko
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="w-4 h-4 text-sky-300"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          ) : null;
+
+        return (
+          <div key={k} className="flex justify-between items-center py-0.5">
+            <div className="flex items-center gap-2 text-[0.8rem]">
+              {icon}
+              <span>Bazowe {k}</span>
             </div>
-            {KEYS.map((k) => {
-              const key = k.toLowerCase();
-              const baseKey = `base_${key}`;
-              const isPct = k === 'CRATE' || k === 'CDMG';
-              const label = k === 'CRATE' ? 'CRATE' : k === 'CDMG' ? 'CDMG' : k;
-
-              return (
-                <div
-                  key={`base-${k}`}
-                  className="flex items-baseline justify-between py-0.5"
-                >
-                  <span className="text-[0.8rem]">
-                    Bazowe {label}
-                  </span>
-                  <span className="font-semibold">
-                    {Number(hero[baseKey] ?? 0)}
-                    {isPct ? ' %' : ''}
-                  </span>
-                </div>
-              );
-            })}
+            <span className="font-semibold text-right">
+              {val}
+              {isPct ? ' %' : ''}
+            </span>
           </div>
+        );
+      })}
+    </div>
 
-          {/* Kolumna bonusowa */}
-          <div>
-            <div className="text-xs opacity-70 tracking-[0.18em] uppercase mb-2">
-              Bonusowe statystyki
+    {/* BONUSOWE */}
+    <div>
+      <div className="flex items-center gap-2 mb-3">
+        <div className="w-2 h-2 bg-amber-400 rounded-full shadow-[0_0_10px_#fcd34d]" />
+        <h3 className="font-semibold text-amber-300 tracking-wider text-xs uppercase">
+          Bonusowe statystyki
+        </h3>
+      </div>
+
+      {KEYS.map((k) => {
+        const key = k.toLowerCase();
+        const bonusKey = `bonus_${key}`;
+        const isPct = k === 'CRATE' || k === 'CDMG';
+        const val = Number(hero[bonusKey] ?? 0);
+
+        const icon =
+          k === 'CRATE' || k === 'CDMG' ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-4 h-4 text-red-400"
+            >
+              <path d="M2 21l9-9m2 0l9 9M2 21l9-9 2 2 9-9" />
+            </svg>
+          ) : k === 'RES' ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              className="w-4 h-4 text-slate-300"
+            >
+              <path d="M12 2l7 3v5c0 5-3 9-7 11-4-2-7-6-7-11V5l7-3z" />
+            </svg>
+          ) : k === 'ACC' ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="w-4 h-4 text-sky-300"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          ) : null;
+
+        return (
+          <div key={k} className="flex justify-between items-center py-0.5">
+            <div className="flex items-center gap-2 text-[0.8rem]">
+              {icon}
+              <span>Bonus {k}{isPct ? ' (%)' : ''}</span>
             </div>
-            {KEYS.map((k) => {
-              const key = k.toLowerCase();
-              const bonusKey = `bonus_${key}`;
-              const isPct = k === 'CRATE' || k === 'CDMG';
-              const label = k === 'CRATE' ? 'CRATE' : k === 'CDMG' ? 'CDMG' : k;
-
-              return (
-                <div
-                  key={`bonus-${k}`}
-                  className="flex items-baseline justify-between py-0.5"
-                >
-                  <span className="text-[0.8rem]">
-                    Bonus {label}{isPct ? ' (%)' : ''}
-                  </span>
-                  <span className="font-semibold">
-                    {Number(hero[bonusKey] ?? 0)}
-                    {isPct ? ' %' : ''}
-                  </span>
-                </div>
-              );
-            })}
+            <span className="font-semibold text-right">
+              {val}
+              {isPct ? ' %' : ''}
+            </span>
           </div>
-        </div>
-      </section>
+        );
+      })}
+    </div>
+  </div>
+</section>
 
       {/* Umiejętności */}
       <section className="hero-card space-y-3">
