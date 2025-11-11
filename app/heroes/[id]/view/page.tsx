@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -213,12 +212,27 @@ export default function HeroViewPage() {
           <p className="hero-subtitle">
             {hero.faction || 'Brak frakcji'} • {hero.rarity || 'Brak rzadkości'}
           </p>
-          <div className="grid md:grid-cols-2 gap-2 text-sm">
-            <div>Affinity: <span className="text-amber-200">{hero.affinity || '—'}</span></div>
-            <div>Typ: <span className="text-amber-200">{hero.type || '—'}</span></div>
-            <div>Poziom: <span className="text-amber-200">{hero.level ?? '—'}</span></div>
-            <div>Gwiazdki: <span className="text-amber-200">{hero.stars ?? '—'}</span></div>
-            <div>Asc: <span className="text-amber-200">{hero.asc ?? '—'}</span></div>
+          <div className="grid md:grid-cols-2 gap-2 text-sm mt-2">
+            <div>
+              Affinity:{' '}
+              <span className="text-amber-200">{hero.affinity || '—'}</span>
+            </div>
+            <div>
+              Typ:{' '}
+              <span className="text-amber-200">{hero.type || '—'}</span>
+            </div>
+            <div>
+              Poziom:{' '}
+              <span className="text-amber-200">{hero.level ?? '—'}</span>
+            </div>
+            <div>
+              Gwiazdki:{' '}
+              <span className="text-amber-200">{hero.stars ?? '—'}</span>
+            </div>
+            <div>
+              Asc:{' '}
+              <span className="text-amber-200">{hero.asc ?? '—'}</span>
+            </div>
             <div>
               Blessing:{' '}
               <span className="text-amber-200">
@@ -232,31 +246,38 @@ export default function HeroViewPage() {
 
       {/* Statystyki */}
       <section className="hero-card space-y-3">
-  <h2 className="section-title">Statystyki</h2>
-  <div className="grid md:grid-cols-2 gap-4 text-sm">
-    {KEYS.map((k) => {
-      ...
-      return (
-        <div key={k} className="flex justify-between gap-4">
-          <div className="flex-1">
-            <div className="text-xs opacity-70">Bazowe {k}</div>
-            <div className="font-semibold">
-              {Number(hero[baseKey] ?? 0)}
-              {isPct ? ' %' : ''}
-            </div>
-          </div>
-          <div className="flex-1 text-right">
-            <div className="text-xs opacity-70">Bonus {k}{isPct ? ' (%)' : ''}</div>
-            <div className="font-semibold">
-              {Number(hero[bonusKey] ?? 0)}
-              {isPct ? ' %' : ''}
-            </div>
-          </div>
+        <h2 className="section-title">Statystyki</h2>
+        <div className="grid md:grid-cols-2 gap-4 text-sm">
+          {KEYS.map((k) => {
+            const key = k.toLowerCase();
+            const baseKey = `base_${key}`;
+            const bonusKey = `bonus_${key}`;
+            const isPct = k === 'CRATE' || k === 'CDMG';
+
+            return (
+              <div key={k} className="flex justify-between gap-4">
+                <div className="flex-1">
+                  <div className="text-xs opacity-70">Bazowe {k}</div>
+                  <div className="font-semibold">
+                    {Number(hero[baseKey] ?? 0)}
+                    {isPct ? ' %' : ''}
+                  </div>
+                </div>
+                <div className="flex-1 text-right">
+                  <div className="text-xs opacity-70">
+                    Bonus {k}
+                    {isPct ? ' (%)' : ''}
+                  </div>
+                  <div className="font-semibold">
+                    {Number(hero[bonusKey] ?? 0)}
+                    {isPct ? ' %' : ''}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
-      );
-    })}
-  </div>
-</section>
+      </section>
 
       {/* Umiejętności */}
       <section className="hero-card space-y-3">
