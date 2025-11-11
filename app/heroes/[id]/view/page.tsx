@@ -213,7 +213,7 @@ export default function HeroViewPage() {
         ← Powrót
       </button>
 
-      {/* GÓRNY PANEL: portret + dane + umiejętności po prawej */}
+      {/* GÓRNY PANEL: portret + [dane bohatera + umiejętności] */}
       <div className="hero-grid">
         {/* Portret */}
         <aside className="hero-portrait">
@@ -226,7 +226,7 @@ export default function HeroViewPage() {
           </div>
         </aside>
 
-        {/* Dane główne + umiejętności */}
+        {/* Karta bohatera: lewa część dane, prawa umiejętności */}
         <section className="hero-card">
           <div className="grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-10 items-start">
             {/* Dane bohatera */}
@@ -266,7 +266,7 @@ export default function HeroViewPage() {
               </div>
             </div>
 
-            {/* Umiejętności – po prawej stronie */}
+            {/* Umiejętności – po prawej, w tym samym panelu */}
             <div className="space-y-2">
               <h2 className="section-title">Umiejętności</h2>
               {skillsEmpty ? (
