@@ -266,20 +266,24 @@ export default function HeroViewPage() {
               </div>
             </div>
 
-            {/* Umiejętności – kolumna prawa */}
-            <div className="w-[40%] min-w-[260px] space-y-2">
-              <h2 className="section-title">Umiejętności</h2>
-              {skillsEmpty ? (
-                <p className="text-xs text-slate-200/70 italic">
-                  Brak zdefiniowanych umiejętności dla tego bohatera.
-                </p>
-              ) : (
-                <pre className="field-input font-mono whitespace-pre-wrap text-xs min-h-[120px]">
-                  {JSON.stringify(hero.skills, null, 2)}
-                </pre>
-              )}
+             {/* Umiejętności – kolumna prawa */}
+            <div className="w-[42%] min-w-[280px]">
+              <div className="border border-slate-700/60 rounded-xl px-4 py-3 bg-slate-900/40 shadow-[0_0_18px_rgba(0,0,0,0.45)]">
+                <h2 className="text-[0.75rem] font-semibold tracking-[0.18em] uppercase text-amber-200 mb-3">
+                  Umiejętności
+                </h2>
+
+                {skillsEmpty ? (
+                  <p className="text-xs text-slate-200/70 italic leading-relaxed">
+                    Brak zdefiniowanych umiejętności dla tego bohatera.
+                  </p>
+                ) : (
+                  <pre className="font-mono text-xs leading-relaxed whitespace-pre-wrap text-slate-100 max-h-56 overflow-y-auto">
+                    {JSON.stringify(hero.skills, null, 2)}
+                  </pre>
+                )}
+              </div>
             </div>
-          </div>
         </section>
       </div>
 
