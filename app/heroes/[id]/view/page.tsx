@@ -266,7 +266,7 @@ export default function HeroViewPage() {
               </div>
             </div>
 
-             {/* Umiejętności – kolumna prawa */}
+            {/* Umiejętności – kolumna prawa, w osobnej karcie */}
             <div className="w-[42%] min-w-[280px]">
               <div className="border border-slate-700/60 rounded-xl px-4 py-3 bg-slate-900/40 shadow-[0_0_18px_rgba(0,0,0,0.45)]">
                 <h2 className="text-[0.75rem] font-semibold tracking-[0.18em] uppercase text-amber-200 mb-3">
@@ -284,6 +284,7 @@ export default function HeroViewPage() {
                 )}
               </div>
             </div>
+          </div>
         </section>
       </div>
 
