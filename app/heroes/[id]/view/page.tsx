@@ -303,8 +303,11 @@ export default function HeroViewPage() {
             </div>
           </div>
 
-          {/* BONUSOWE – tylko przesunięte w prawo */}
-          <div className="flex-1 min-w-[260px] max-w-[300px] ml-[4rem]">
+          {/* SPACER – przesuwa bonusowe statystyki bardziej w prawo */}
+          <div className="w-[6rem]" />
+
+          {/* BONUSOWE */}
+          <div className="flex-1 min-w-[260px] max-w-[300px]">
             <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
               Bonusowe statystyki
             </h3>
