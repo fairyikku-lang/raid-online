@@ -270,3 +270,19 @@
 .hero-table tbody tr:hover {
   background: rgba(30, 64, 175, 0.2);
 }
+/* Dwie kolumny statystyk obok siebie:
+   bazowe | bonusowe */
+.hero-stats-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 4rem;        /* odstęp między bazowymi i bonusowymi */
+  align-items: flex-start;
+}
+
+/* Na wąskich ekranach statystyki mogą się zwinąć jedna pod drugą */
+@media (max-width: 900px) {
+  .hero-stats-columns {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 2.5rem;
+  }
+}
