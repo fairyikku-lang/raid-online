@@ -275,7 +275,7 @@
 .hero-stats-columns {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  column-gap: 4rem;        /* odstęp między bazowymi i bonusowymi */
+  column-gap: 1.75rem;       /* było 4rem – zmniejszamy o połowę */
   align-items: flex-start;
 }
 
