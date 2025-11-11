@@ -3,9 +3,22 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { createBrowserSupabaseClient } from '@/lib/supabaseBrowserClient';
+import Image from 'next/image'; // <-- DODAJ TO
 
 const KEYS = ['HP', 'ATK', 'DEF', 'SPD', 'CRATE', 'CDMG', 'RES', 'ACC'] as const;
-
+const STAT_ICONS: Record<
+  string,
+  { src: string; alt: string }
+> = {
+  HP:   { src: '/icons/stat-hp.png',      alt: 'HP' },            // serce
+  ATK:  { src: '/icons/stat-atk.png',     alt: 'Atak' },          // miecz
+  DEF:  { src: '/icons/stat-def.png',     alt: 'Obrona' },        // tarcza
+  SPD:  { src: '/icons/stat-spd.png',     alt: 'Szybkość' },      // piorun
+  RES:  { src: '/icons/stat-res.png',     alt: 'Resist (zbroja)' }, // zbroja
+  ACC:  { src: '/icons/stat-acc.png',     alt: 'Accuracy (oko)' }, // oko
+  CRATE:{ src: '/icons/stat-crate.png',   alt: 'Crit Rate' },     // 2 miecze we krwi
+  CDMG: { src: '/icons/stat-cdmg.png',    alt: 'Crit Damage' },   // 2 miecze
+};
 type Hero = {
   id: string;
   name: string;
@@ -244,149 +257,94 @@ export default function HeroViewPage() {
         </section>
       </div>
 
-     {/* Statystyki */}
-<section className="hero-card space-y-3">
-  <h2 className="section-title">Statystyki</h2>
+       {/* Statystyki */}
+      <section className="hero-card space-y-3">
+        <h2 className="section-title">Statystyki</h2>
 
-  <div className="grid md:grid-cols-2 gap-12 mt-4 text-sm">
-    {/* BAZOWE */}
-    <div>
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-2 h-2 bg-amber-400 rounded-full shadow-[0_0_10px_#fcd34d]" />
-        <h3 className="font-semibold text-amber-300 tracking-wider text-xs uppercase">
-          Bazowe statystyki
-        </h3>
-      </div>
+        {/* ZAWSZE 2 kolumny obok siebie */}
+        <div className="grid grid-cols-2 gap-x-16 gap-y-6 mt-4 text-sm">
+          {/* BAZOWE */}
+          <div>
+            <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
+              Bazowe statystyki
+            </h3>
 
-      {KEYS.map((k) => {
-        const key = k.toLowerCase();
-        const baseKey = `base_${key}`;
-        const isPct = k === 'CRATE' || k === 'CDMG';
-        const val = Number(hero[baseKey] ?? 0);
+            {KEYS.map((k) => {
+              const key = k.toLowerCase();
+              const baseKey = `base_${key}`;
+              const isPct = k === 'CRATE' || k === 'CDMG';
+              const val = Number(hero[baseKey] ?? 0);
+              const iconInfo = STAT_ICONS[k];
 
-        const icon =
-          k === 'CRATE' || k === 'CDMG' ? (
-            // miecze
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-4 h-4 text-red-400"
-            >
-              <path d="M2 21l9-9m2 0l9 9M2 21l9-9 2 2 9-9" />
-            </svg>
-          ) : k === 'RES' ? (
-            // zbroja
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              className="w-4 h-4 text-slate-300"
-            >
-              <path d="M12 2l7 3v5c0 5-3 9-7 11-4-2-7-6-7-11V5l7-3z" />
-            </svg>
-          ) : k === 'ACC' ? (
-            // oko
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="w-4 h-4 text-sky-300"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-              />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-          ) : null;
-
-        return (
-          <div key={k} className="flex justify-between items-center py-0.5">
-            <div className="flex items-center gap-2 text-[0.8rem]">
-              {icon}
-              <span>Bazowe {k}</span>
-            </div>
-            <span className="font-semibold text-right">
-              {val}
-              {isPct ? ' %' : ''}
-            </span>
+              return (
+                <div
+                  key={`base-${k}`}
+                  className="flex items-center justify-between py-0.5"
+                >
+                  <div className="flex items-center gap-2 text-[0.8rem]">
+                    {iconInfo && (
+                      <Image
+                        src={iconInfo.src}
+                        alt={iconInfo.alt}
+                        width={18}
+                        height={18}
+                        className="opacity-90"
+                      />
+                    )}
+                    <span>Bazowe {k}</span>
+                  </div>
+                  <span className="font-semibold">
+                    {val}
+                    {isPct ? ' %' : ''}
+                  </span>
+                </div>
+              );
+            })}
           </div>
-        );
-      })}
-    </div>
 
-    {/* BONUSOWE */}
-    <div>
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-2 h-2 bg-amber-400 rounded-full shadow-[0_0_10px_#fcd34d]" />
-        <h3 className="font-semibold text-amber-300 tracking-wider text-xs uppercase">
-          Bonusowe statystyki
-        </h3>
-      </div>
+          {/* BONUSOWE */}
+          <div>
+            <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
+              Bonusowe statystyki
+            </h3>
 
-      {KEYS.map((k) => {
-        const key = k.toLowerCase();
-        const bonusKey = `bonus_${key}`;
-        const isPct = k === 'CRATE' || k === 'CDMG';
-        const val = Number(hero[bonusKey] ?? 0);
+            {KEYS.map((k) => {
+              const key = k.toLowerCase();
+              const bonusKey = `bonus_${key}`;
+              const isPct = k === 'CRATE' || k === 'CDMG';
+              const val = Number(hero[bonusKey] ?? 0);
+              const iconInfo = STAT_ICONS[k];
 
-        const icon =
-          k === 'CRATE' || k === 'CDMG' ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-4 h-4 text-red-400"
-            >
-              <path d="M2 21l9-9m2 0l9 9M2 21l9-9 2 2 9-9" />
-            </svg>
-          ) : k === 'RES' ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              className="w-4 h-4 text-slate-300"
-            >
-              <path d="M12 2l7 3v5c0 5-3 9-7 11-4-2-7-6-7-11V5l7-3z" />
-            </svg>
-          ) : k === 'ACC' ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="w-4 h-4 text-sky-300"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-              />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-          ) : null;
-
-        return (
-          <div key={k} className="flex justify-between items-center py-0.5">
-            <div className="flex items-center gap-2 text-[0.8rem]">
-              {icon}
-              <span>Bonus {k}{isPct ? ' (%)' : ''}</span>
-            </div>
-            <span className="font-semibold text-right">
-              {val}
-              {isPct ? ' %' : ''}
-            </span>
+              return (
+                <div
+                  key={`bonus-${k}`}
+                  className="flex items-center justify-between py-0.5"
+                >
+                  <div className="flex items-center gap-2 text-[0.8rem]">
+                    {iconInfo && (
+                      <Image
+                        src={iconInfo.src}
+                        alt={iconInfo.alt}
+                        width={18}
+                        height={18}
+                        className="opacity-90"
+                      />
+                    )}
+                    <span>
+                      Bonus {k}
+                      {isPct ? ' (%)' : ''}
+                    </span>
+                  </div>
+                  <span className="font-semibold">
+                    {val}
+                    {isPct ? ' %' : ''}
+                  </span>
+                </div>
+              );
+            })}
           </div>
-        );
-      })}
-    </div>
-  </div>
-</section>
+        </div>
+      </section>
 
       {/* Umiejętności */}
       <section className="hero-card space-y-3">
