@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { createBrowserSupabaseClient } from '@/lib/supabaseBrowserClient';
 
@@ -47,7 +47,6 @@ export default function HeroesPage() {
   };
 
   useEffect(() => {
-    // supabase z helpera jest stabilne w trakcie życia komponentu – nie daję go w depsach
     fetchHeroes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -80,7 +79,6 @@ export default function HeroesPage() {
       console.error('Błąd dodawania bohatera:', error);
       setError('Nie udało się dodać bohatera.');
     } else {
-      // wyczyść formularz i odśwież listę
       setName('');
       setFaction('');
       setRarity('');
@@ -116,56 +114,75 @@ export default function HeroesPage() {
 
   return (
     <main className="max-w-5xl mx-auto p-4 space-y-6">
-      <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Bohaterowie</h1>
-        {/* Tu możesz później dodać filtr, sortowanie itd. */}
+      <header>
+        <h1 className="text-3xl font-bold mb-2">Bohaterowie</h1>
+        <p className="text-sm mb-4">
+          Zarządzaj bohaterami – dodawaj, przeglądaj i usuwaj dane.
+        </p>
       </header>
 
       <section className="border rounded-md p-4 space-y-3">
         <h2 className="text-lg font-semibold">Dodaj bohatera</h2>
-        <form onSubmit={handleAdd} className="grid grid-cols-1 sm:grid-cols-5 gap-2">
-          <input
-            className="border rounded-md px-2 py-1 text-sm"
-            placeholder="Nazwa"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <input
-            className="border rounded-md px-2 py-1 text-sm"
-            placeholder="Frakcja"
-            value={faction}
-            onChange={(e) => setFaction(e.target.value)}
-          />
-          <input
-            className="border rounded-md px-2 py-1 text-sm"
-            placeholder="Rzadkość (np. Rare/Epic/Legendary)"
-            value={rarity}
-            onChange={(e) => setRarity(e.target.value)}
-          />
-          <input
-            className="border rounded-md px-2 py-1 text-sm"
-            placeholder="Poziom (np. 60)"
-            value={level}
-            onChange={(e) => setLevel(e.target.value)}
-          />
+        <form onSubmit={handleAdd} className="space-y-3">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm">Nazwa</label>
+            <input
+              className="border rounded-md px-2 py-1 text-sm"
+              placeholder="Kael, Trunda..."
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm">Frakcja</label>
+            <input
+              className="border rounded-md px-2 py-1 text-sm"
+              placeholder="Dark Elves"
+              value={faction}
+              onChange={(e) => setFaction(e.target.value)}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm">Rzadkość</label>
+            <input
+              className="border rounded-md px-2 py-1 text-sm"
+              placeholder="Rare, Epic, Legendary"
+              value={rarity}
+              onChange={(e) => setRarity(e.target.value)}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm">Poziom</label>
+            <input
+              className="border rounded-md px-2 py-1 text-sm"
+              placeholder="60"
+              value={level}
+              onChange={(e) => setLevel(e.target.value)}
+            />
+          </div>
+
           <button
             type="submit"
             disabled={saving}
-            className="border rounded-md px-3 py-1 text-sm font-medium disabled:opacity-60"
+            className="border rounded-md px-4 py-2 text-sm font-medium disabled:opacity-60"
           >
-            {saving ? 'Zapisywanie...' : 'Dodaj'}
+            {saving ? 'Zapisywanie…' : 'Dodaj'}
           </button>
+
+          {error && <p className="text-xs text-red-600">{error}</p>}
         </form>
-        {error && <p className="text-xs text-red-600">{error}</p>}
       </section>
 
       <section className="border rounded-md p-4 space-y-3">
         <h2 className="text-lg font-semibold">Lista bohaterów</h2>
 
         {loading ? (
-          <p className="text-sm text-gray-500">Ładowanie bohaterów…</p>
+          <p className="text-sm text-gray-400">Ładowanie bohaterów…</p>
         ) : heroes.length === 0 ? (
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-400">
             Nie masz jeszcze żadnych bohaterów. Dodaj pierwszego 🙂
           </p>
         ) : (
