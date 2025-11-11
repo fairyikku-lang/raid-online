@@ -257,13 +257,11 @@ export default function HeroViewPage() {
         </section>
       </div>
 
- {/* Statystyki */}
-<section className="hero-card space-y-3 mt-2 overflow-x-auto">
+{/* Statystyki */}
+<section className="hero-card space-y-3 mt-2">
   <h2 className="section-title">Statystyki</h2>
 
-  {/* Kontener – sztywniejszy layout */}
-  <div className="min-w-[820px] grid grid-cols-[300px_140px_300px] items-start mt-2 text-sm">
-
+  <div className="hero-stats-columns mt-3 text-sm">
     {/* BAZOWE */}
     <div>
       <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
@@ -305,11 +303,8 @@ export default function HeroViewPage() {
       </div>
     </div>
 
-    {/* SEPARATOR */}
-    <div className="border-l border-amber-900/40 h-full mx-auto" />
-
     {/* BONUSOWE */}
-    <div className="pl-2">
+    <div>
       <h3 className="font-semibold text-amber-200 tracking-[0.18em] uppercase text-xs mb-3">
         Bonusowe statystyki
       </h3>
